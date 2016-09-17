@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Spine.Unity;
 
 public class PlayerController : MonoBehaviour 
 {
@@ -20,9 +21,22 @@ public class PlayerController : MonoBehaviour
 	private MicHandle.AvailableInputs moveAudioInput1 = MicHandle.AvailableInputs.Swim1;
 	private MicHandle.AvailableInputs moveAudioInput2 = MicHandle.AvailableInputs.Swim2;
 
-	public KeyCode lastKeyboardInput = KeyCode.Space;
-	public MicHandle.AvailableInputs lastAudioInput = MicHandle.AvailableInputs.None;
+	private KeyCode lastKeyboardInput = KeyCode.Space;
+	private MicHandle.AvailableInputs lastAudioInput = MicHandle.AvailableInputs.None;
 
+	
+	// Spine Variables
+	private SkeletonAnimation skeletonAnimation;
+	private Spine.AnimationState spineAnimationState;
+	private Spine.Skeleton skeleton;
+
+	private string swimAnimation = "idle";
+	private string attackAnimation = "bite";
+
+	public float maxAnimationScale = 3;
+	public float minAnimationScale = 1;
+
+		
 	private bool checkInput(KeyCode moveKeyboardInput, MicHandle.AvailableInputs moveAudioInput)
 	{
 		if (DEBUG)
@@ -71,11 +85,20 @@ public class PlayerController : MonoBehaviour
 		// print(speedFactor);
 	}	
 
+	void setAnimationTimeScale (float speed)
+	{
+		float deltaTimeScale = maxAnimationScale - minAnimationScale;
+		
+		skeletonAnimation.timeScale = minAnimationScale + (speed / maxSpeed * deltaTimeScale);
+	}
+
+
 	public float GetCurrentSpeed()
 	{
 		float speed = maxSpeed * speedFactor; 
+		speed = speed < minSpeed ? minSpeed : speed;
 
-		return speed < minSpeed ? minSpeed : speed;
+		return speed;
 	}
 
     void OnTriggerEnter2D(Collider2D other) 
@@ -91,9 +114,24 @@ public class PlayerController : MonoBehaviour
 		}
     }
 
+	public void PausePlayer ()
+	{
+		enabled = false;
+		skeletonAnimation.enabled = false;
+	}
+
+	public void ResumePlayer ()
+	{
+		enabled = true;
+		skeletonAnimation.enabled = true;
+	}
+
 	void Start () 
 	{
-
+		skeletonAnimation = GetComponent<SkeletonAnimation>();
+		spineAnimationState = skeletonAnimation.state;
+		spineAnimationState.SetAnimation(0, swimAnimation, true);
+		skeleton = skeletonAnimation.skeleton;
 	}
 
 	// Update is called once per frame
@@ -101,13 +139,17 @@ public class PlayerController : MonoBehaviour
 	{
 		MoveInputHandling();
 		float currentSpeed = GetCurrentSpeed();
-		// print(currentSpeed);
+
+		setAnimationTimeScale(currentSpeed);
+
 		// transform.Translate(Vector3.right * currentSpeed);
 		Vector3 position = transform.position;
 		Vector3 targetPosition = position;
 		targetPosition.x = targetPosition.x + currentSpeed;
+
 		float targetY = (currentSpeed - minSpeed) * (maxHeight - minHeight)/(maxSpeed-minSpeed) + minHeight;
 		targetPosition.y = Mathf.Lerp(position.y, targetY, Time.deltaTime);
+
 		// print (targetPosition);
 		// print (currentSpeed);
 		// print((currentSpeed - minSpeed) * (maxHeight - minHeight)/(maxSpeed-minSpeed) + minHeight);

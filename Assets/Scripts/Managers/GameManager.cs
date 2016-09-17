@@ -62,6 +62,24 @@ public class GameManager : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		
+	
+	}
+
+
+
+	////////
+	// Game Flow Control
+	///////
+
+	public void PauseGame ()
+	{
+		player.GetComponent<PlayerController>().PausePlayer();
+		mainCamera.GetComponent<CameraController>().enabled = false;
+	}
+
+	public void ResumeGame ()
+	{
+		player.GetComponent<PlayerController>().ResumePlayer();
+		mainCamera.GetComponent<CameraController>().enabled = true;
 	}
 }
