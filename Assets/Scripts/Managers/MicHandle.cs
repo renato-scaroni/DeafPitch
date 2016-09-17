@@ -6,7 +6,11 @@ using System.Collections.Generic;
 public class MicHandle : MonoBehaviour {
  
   // Singleton reference
-  public static MicHandle instance;
+  static public MicHandle instance
+  {
+      get;
+      private set;
+  }
 
   private const int FREQUENCY = 48000;    // Wavelength, I think.
   private const int SAMPLECOUNT = 1024;   // Sample Count.

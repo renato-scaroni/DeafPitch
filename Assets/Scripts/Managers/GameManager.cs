@@ -4,6 +4,7 @@ using System.Collections;
 public class GameManager : MonoBehaviour 
 {
 	public GameObject player; 
+	public GameObject mainCamera; 
 
 	static public GameManager instance
 	{
@@ -21,5 +22,23 @@ public class GameManager : MonoBehaviour
 	void Update () 
 	{
 	
+	}
+
+
+
+	////////
+	// Game Flow Control
+	///////
+
+	public void PauseGame ()
+	{
+		player.GetComponent<PlayerController>().enabled = false;
+		mainCamera.GetComponent<CameraController>().enabled = false;
+	}
+
+	public void ResumeGame ()
+	{
+		player.GetComponent<PlayerController>().enabled = true;
+		mainCamera.GetComponent<CameraController>().enabled = true;
 	}
 }
