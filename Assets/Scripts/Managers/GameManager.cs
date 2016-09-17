@@ -32,13 +32,13 @@ public class GameManager : MonoBehaviour
 
 	public void PauseGame ()
 	{
-		player.GetComponent<PlayerController>().enabled = false;
+		player.GetComponent<PlayerController>().PausePlayer();
 		mainCamera.GetComponent<CameraController>().enabled = false;
 	}
 
 	public void ResumeGame ()
 	{
-		player.GetComponent<PlayerController>().enabled = true;
+		player.GetComponent<PlayerController>().ResumePlayer();
 		mainCamera.GetComponent<CameraController>().enabled = true;
 	}
 }
