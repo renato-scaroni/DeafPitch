@@ -1,16 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CycleThroughSounds : MonoBehaviour 
+public class PersonController : MonoBehaviour 
 {
-	
-
-	AudioSource source;
+	public float speed = .3f;
 
 	// Use this for initialization
 	void Start () 
 	{
-		
+	
 	}
 	
 	// Update is called once per frame

@@ -7,6 +7,9 @@ public class PlayerController : MonoBehaviour
 	public float maxSpeed = 1f;
 	public KeyCode moveInput1 = KeyCode.Z;
 	public KeyCode moveInput2 = KeyCode.X;
+	public float minHeight = -4.5f; 
+	public float maxHeight = 0;
+	public float maxInputDiff = .7f;
 
 	private float lastMoveInput1 = 0;
 	private float lastMoveInput2 = 0.1f;
@@ -24,10 +27,10 @@ public class PlayerController : MonoBehaviour
 		if(Input.GetKeyDown(moveInput2) && moveInput2 != lastInput)
 		{
 			lastMoveInput2 = Time.time;
-			
+			input = true;
 		}
-		print(Mathf.Abs(lastMoveInput1 - lastMoveInput2));
-		float targetSpeedFactor = .7f - Mathf.Abs(lastMoveInput1 - lastMoveInput2);
+		// print(Mathf.Abs(lastMoveInput1 - lastMoveInput2));
+		float targetSpeedFactor = maxInputDiff - Mathf.Abs(lastMoveInput1 - lastMoveInput2);
 		targetSpeedFactor = targetSpeedFactor < 0 ? 0 : targetSpeedFactor;
 		if(input)
 		{
@@ -58,6 +61,15 @@ public class PlayerController : MonoBehaviour
 	{
 		MoveInputHandling();
 		float currentSpeed = GetCurrentSpeed();
-		transform.Translate(Vector3.right * currentSpeed);
+		// transform.Translate(Vector3.right * currentSpeed);
+		Vector3 position = transform.position;
+		Vector3 targetPosition = position;
+		targetPosition.x = targetPosition.x + currentSpeed;
+		float targetY = (currentSpeed - minSpeed) * (maxHeight - minHeight)/(maxSpeed-minSpeed) + minHeight;
+		targetPosition.y = Mathf.Lerp(position.y, targetY, Time.deltaTime);
+		// print (targetPosition);
+		// print (currentSpeed);
+		// print((currentSpeed - minSpeed) * (maxHeight - minHeight)/(maxSpeed-minSpeed) + minHeight);
+		transform.position = targetPosition;
 	}
 }
