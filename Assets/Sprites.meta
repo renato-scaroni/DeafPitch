@@ -1,7 +1,13 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 741a6080376104ddcae48bc6a5122230
 folderAsset: yes
 timeCreated: 1474140692
+=======
+guid: edcf0e9abc55a2444a1c91c0c135ff2e
+folderAsset: yes
+timeCreated: 1474140456
+>>>>>>> gameplay
 licenseType: Free
 DefaultImporter:
   userData: 

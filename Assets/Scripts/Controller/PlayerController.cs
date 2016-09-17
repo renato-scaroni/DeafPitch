@@ -31,6 +31,9 @@ public class PlayerController : MonoBehaviour
 			return moveAudioInput != lastAudioInput && MicHandle.instance.getInputDown(moveAudioInput);
 	}
 
+	public delegate void AtePersonHandler();
+	public static event AtePersonHandler OnAtePerson;
+
 	private void MoveInputHandling()
 	{
 		bool input = false;
@@ -38,6 +41,7 @@ public class PlayerController : MonoBehaviour
 		if (checkInput(moveKeyboardInput1, moveAudioInput1))
 		{
 			lastMoveInput1 = Time.time;
+			lastInput = moveInput1;
 			input = true;
 
 			lastKeyboardInput = moveKeyboardInput1;
@@ -47,6 +51,7 @@ public class PlayerController : MonoBehaviour
 		else if (checkInput(moveKeyboardInput2, moveAudioInput2))
 		{
 			lastMoveInput2 = Time.time;
+			lastInput = moveInput2;
 			input = true;
 
 			lastKeyboardInput = moveKeyboardInput2;
@@ -75,6 +80,19 @@ public class PlayerController : MonoBehaviour
 		return speed < minSpeed ? minSpeed : speed;
 	}
 
+    void OnTriggerEnter2D(Collider2D other) 
+	{
+		print(other.gameObject);
+        if(other.gameObject.tag == "Person")
+		{
+		print("TRIGGER!!!!!");
+			if(OnAtePerson != null)
+			{
+				OnAtePerson();
+			}
+		}
+    }
+
 	void Start () 
 	{
 
@@ -85,6 +103,7 @@ public class PlayerController : MonoBehaviour
 	{
 		MoveInputHandling();
 		float currentSpeed = GetCurrentSpeed();
+		// print(currentSpeed);
 		// transform.Translate(Vector3.right * currentSpeed);
 		Vector3 position = transform.position;
 		Vector3 targetPosition = position;
