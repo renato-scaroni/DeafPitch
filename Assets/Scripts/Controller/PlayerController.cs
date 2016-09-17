@@ -41,7 +41,6 @@ public class PlayerController : MonoBehaviour
 		if (checkInput(moveKeyboardInput1, moveAudioInput1))
 		{
 			lastMoveInput1 = Time.time;
-			lastInput = moveInput1;
 			input = true;
 
 			lastKeyboardInput = moveKeyboardInput1;
@@ -51,7 +50,6 @@ public class PlayerController : MonoBehaviour
 		else if (checkInput(moveKeyboardInput2, moveAudioInput2))
 		{
 			lastMoveInput2 = Time.time;
-			lastInput = moveInput2;
 			input = true;
 
 			lastKeyboardInput = moveKeyboardInput2;
