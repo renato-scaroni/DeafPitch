@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
 			lastKeyboardInput = moveKeyboardInput2;
 			lastAudioInput = moveAudioInput2;
 		}
-
+        
 		// print(Mathf.Abs(lastMoveInput1 - lastMoveInput2));
 		float targetSpeedFactor = maxInputDiff - Mathf.Abs(lastMoveInput1 - lastMoveInput2);
 		targetSpeedFactor = targetSpeedFactor < 0 ? 0 : targetSpeedFactor;
