@@ -20,6 +20,9 @@ Add a comment to this line
 *.booproj
 *.svd
 Temp/
+Library/
+.vscode/
+Assets/VSCode*
 
 # Unity3D generated meta files
 *.pidb.meta
