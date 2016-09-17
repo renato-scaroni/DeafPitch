@@ -33,6 +33,7 @@
          childPrefab.transform.position = targetposition;
          childSprite.sprite = spriteImg;
 		 childSprite.sortingOrder = sprite.sortingOrder;
+		 childSprite.sortingLayerName = sprite.sortingLayerName;
 
          // Loop through and spit out repeated tiles
          GameObject child;
