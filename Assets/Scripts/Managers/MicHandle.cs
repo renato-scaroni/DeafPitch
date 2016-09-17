@@ -14,23 +14,15 @@ public class MicHandle : MonoBehaviour {
   private const float THRESHOLD = 0.01f;  // Minimum amplitude to extract pitch (recieve anything)
   private const float ALPHA = 0.05f;      // The alpha for the low pass filter (I don't really understand this).
  
-  public int recordedLength = 50;    // How many previous frames of sound are analyzed.
-  public int requiedBlowTime = 4;    // How long a blow must last to be classified as a blow (and not a sigh for instance).
   public int clamp = 160;            // Used to clamp dB (I don't really understand this either).
   public float epsilon = 30;         //
  
   private float rmsValue;            // Volume in RMS
   private float dbValue;             // Volume in DB
   private float pitchValue;          // Pitch - Hz (is this frequency?)
-  private int blowingTime;           // How long each blow has lasted
- 
-  private float lowPassResults;      // Low Pass Filter result
-  private float peakPowerForChannel; //
- 
+
   private float[] samples;           // Samples
   private float[] spectrum;          // Spectrum
-  // private List<float> dbValues;      // Used to average recent volume.
-
 
   private List<float> pitchValues;   // Used to average recent pitch.
   private bool isRecording = false;
