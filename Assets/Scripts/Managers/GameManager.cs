@@ -5,7 +5,7 @@ using System;
 public class GameManager : MonoBehaviour 
 {
 	public GameObject player; 
-	public Camera camera;
+	public Camera mainCamera;
 	public GameObject person;
 
 	private PlayerController playerController;
@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
 	{
 		yield return new WaitForSeconds(time);
 		Vector3 position = defaultPosition;
-		position.x += camera.transform.position.x + playerController.GetCurrentSpeed();
+		position.x += mainCamera.transform.position.x + playerController.GetCurrentSpeed();
 		CreateNewPerson(position);
 	}
 
@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
 	{
 		instance = this;
 		float aspectRatio = (float)(Screen.width) / (float)(Screen.height);
-		screenWidth = camera.orthographicSize * aspectRatio;
+		screenWidth = mainCamera.orthographicSize * aspectRatio;
 		print("[GameManager] " + screenWidth);
 		defaultPosition = new Vector3(screenWidth*3/4, 0, 0);
 		CreateNewPerson(defaultPosition);
