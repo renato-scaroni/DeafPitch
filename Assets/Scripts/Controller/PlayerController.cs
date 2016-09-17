@@ -16,17 +16,22 @@ public class PlayerController : MonoBehaviour
 	private float speedFactor = 0;
 	private KeyCode lastInput = KeyCode.Space;	
 
+	public delegate void AtePersonHandler();
+	public static event AtePersonHandler OnAtePerson;
+
 	private void MoveInputHandling()
 	{
 		bool input = false;
 		if(Input.GetKeyDown(moveInput1) && moveInput1 != lastInput)
 		{
 			lastMoveInput1 = Time.time;
+			lastInput = moveInput1;
 			input = true;
 		}
 		if(Input.GetKeyDown(moveInput2) && moveInput2 != lastInput)
 		{
 			lastMoveInput2 = Time.time;
+			lastInput = moveInput2;
 			input = true;
 		}
 		// print(Mathf.Abs(lastMoveInput1 - lastMoveInput2));
@@ -41,7 +46,7 @@ public class PlayerController : MonoBehaviour
 			speedFactor = speedFactor > 0 ? speedFactor -= Time.deltaTime/10 : 0;
 		}
 		
-		print(speedFactor);
+		// print(speedFactor);
 	}	
 
 	public float GetCurrentSpeed()
@@ -50,6 +55,19 @@ public class PlayerController : MonoBehaviour
 
 		return speed < minSpeed ? minSpeed : speed;
 	}
+
+    void OnTriggerEnter2D(Collider2D other) 
+	{
+		print(other.gameObject);
+        if(other.gameObject.tag == "Person")
+		{
+		print("TRIGGER!!!!!");
+			if(OnAtePerson != null)
+			{
+				OnAtePerson();
+			}
+		}
+    }
 
 	void Start () 
 	{
@@ -61,6 +79,7 @@ public class PlayerController : MonoBehaviour
 	{
 		MoveInputHandling();
 		float currentSpeed = GetCurrentSpeed();
+		// print(currentSpeed);
 		// transform.Translate(Vector3.right * currentSpeed);
 		Vector3 position = transform.position;
 		Vector3 targetPosition = position;

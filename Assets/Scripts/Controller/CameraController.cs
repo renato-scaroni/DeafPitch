@@ -8,7 +8,11 @@ public class CameraController : MonoBehaviour
 	private GameManager gameManager;
 	private Transform playerTransfom;
 	private PlayerController player;
-	private float currentSpeed;
+	public float currentSpeed
+	{
+		get;
+		private set;
+	}
 
 	private void MoveCamera()
 	{
