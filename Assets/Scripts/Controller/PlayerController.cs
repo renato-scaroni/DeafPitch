@@ -36,6 +36,8 @@ public class PlayerController : MonoBehaviour
 	public float maxAnimationScale = 3;
 	public float minAnimationScale = 1;
 
+	enum PlayerState {bite, swimming};
+	private PlayerState currentState;
 		
 	private bool checkInput(KeyCode moveKeyboardInput, MicHandle.AvailableInputs moveAudioInput)
 	{
@@ -70,7 +72,6 @@ public class PlayerController : MonoBehaviour
 			lastAudioInput = moveAudioInput2;
 		}
         
-		// print(Mathf.Abs(lastMoveInput1 - lastMoveInput2));
 		float targetSpeedFactor = maxInputDiff - Mathf.Abs(lastMoveInput1 - lastMoveInput2);
 		targetSpeedFactor = targetSpeedFactor < 0 ? 0 : targetSpeedFactor;
 		if(input)
@@ -81,8 +82,6 @@ public class PlayerController : MonoBehaviour
 		{
 			speedFactor = speedFactor > 0 ? speedFactor -= Time.deltaTime/10 : 0;
 		}
-		
-		// print(speedFactor);
 	}	
 
 	void setAnimationTimeScale (float speed)
@@ -110,6 +109,8 @@ public class PlayerController : MonoBehaviour
 			if(OnAtePerson != null)
 			{
 				OnAtePerson();
+				currentState = PlayerState.bite;
+				spineAnimationState.SetAnimation(0, attackAnimation, false);
 			}
 		}
     }
@@ -123,7 +124,18 @@ public class PlayerController : MonoBehaviour
 	public void ResumePlayer ()
 	{
 		enabled = true;
-		skeletonAnimation.enabled = true;
+		spineAnimationState.SetAnimation(0, swimAnimation, true);
+		skeleton = skeletonAnimation.skeleton;
+		currentState = PlayerState.swimming;
+	}
+
+	void AnimationComplete(Spine.AnimationState state, int trackIndex, int loopCount)
+	{
+		if(currentState == PlayerState.bite)
+		{
+			spineAnimationState.SetAnimation(0, swimAnimation, true);
+			currentState = PlayerState.swimming;	
+		}
 	}
 
 	void Start () 
@@ -132,6 +144,8 @@ public class PlayerController : MonoBehaviour
 		spineAnimationState = skeletonAnimation.state;
 		spineAnimationState.SetAnimation(0, swimAnimation, true);
 		skeleton = skeletonAnimation.skeleton;
+		currentState = PlayerState.swimming;
+		spineAnimationState.Complete += AnimationComplete;
 	}
 
 	// Update is called once per frame
@@ -140,9 +154,9 @@ public class PlayerController : MonoBehaviour
 		MoveInputHandling();
 		float currentSpeed = GetCurrentSpeed();
 
-		setAnimationTimeScale(currentSpeed);
+		if(currentState == PlayerState.swimming)
+			setAnimationTimeScale(currentSpeed);
 
-		// transform.Translate(Vector3.right * currentSpeed);
 		Vector3 position = transform.position;
 		Vector3 targetPosition = position;
 		targetPosition.x = targetPosition.x + currentSpeed;
@@ -150,9 +164,6 @@ public class PlayerController : MonoBehaviour
 		float targetY = (currentSpeed - minSpeed) * (maxHeight - minHeight)/(maxSpeed-minSpeed) + minHeight;
 		targetPosition.y = Mathf.Lerp(position.y, targetY, Time.deltaTime);
 
-		// print (targetPosition);
-		// print (currentSpeed);
-		// print((currentSpeed - minSpeed) * (maxHeight - minHeight)/(maxSpeed-minSpeed) + minHeight);
 		transform.position = targetPosition;
 	}
 }
