@@ -5,6 +5,9 @@ using System.Collections.Generic;
  
 public class MicHandle : MonoBehaviour {
  
+  // Singleton reference
+  public static MicHandle instance;
+
   private const int FREQUENCY = 48000;    // Wavelength, I think.
   private const int SAMPLECOUNT = 1024;   // Sample Count.
   private const float REFVALUE = 0.1f;    // RMS value for 0 dB.
@@ -26,8 +29,11 @@ public class MicHandle : MonoBehaviour {
  
   private float[] samples;           // Samples
   private float[] spectrum;          // Spectrum
-  private List<float> dbValues;      // Used to average recent volume.
+  // private List<float> dbValues;      // Used to average recent volume.
+
+
   private List<float> pitchValues;   // Used to average recent pitch.
+  private bool isRecording = false;
  
 
   ///////
@@ -37,6 +43,7 @@ public class MicHandle : MonoBehaviour {
   public bool DEBUG = true;
   public enum AvailableInputs {None, Swim1, Swim2, Attack, Jump};
   public enum InputStates {None, Pressed, JustPressed, Hold, Released};
+
   private Dictionary<AvailableInputs, float> targetPitchs;
   private Dictionary<AvailableInputs, InputStates> currentStates;
 
@@ -50,10 +57,11 @@ public class MicHandle : MonoBehaviour {
   ///////
 
   public void Start () {
+    // Setting Singleton
+    MicHandle.instance = this;
+
     samples = new float[SAMPLECOUNT];
     spectrum = new float[SAMPLECOUNT];
-    dbValues = new List<float>();
-    pitchValues = new List<float>();
  
     targetPitchs = new Dictionary<AvailableInputs, float>
     {
@@ -84,6 +92,9 @@ public class MicHandle : MonoBehaviour {
  
 	  // if (firstPitch == 0 && pitchValue > 0) firstPitch = pitchValue;
     updateInputStates();
+
+    if (isRecording)
+      pitchValues.Add(pitchValue);
   }
  
 
@@ -100,9 +111,6 @@ public class MicHandle : MonoBehaviour {
     while (!(Microphone.GetPosition("Built-in Microphone") > 0));
     
     GetComponent<AudioSource>().Play();
-
-    // print("InvokeRepeating");
-    // InvokeRepeating("AnalyzeSound", 0.0f, 1.0f / 15.0f); // update at 15 fps
   }
  
   /// Credits to aldonaletto for the function, http://goo.gl/VGwKt
@@ -159,42 +167,45 @@ public class MicHandle : MonoBehaviour {
     //   print("Pitch Value: " + pitchValue);
     // }
   }
- 
-  private void DeriveBlow() {
- 
-    UpdateRecords(dbValue, dbValues);
-    UpdateRecords(pitchValue, pitchValues);
- 
-    // Find the average pitch in our records (used to decipher against whistles, clicks, etc).
-    float sumPitch = 0;
-    foreach (float num in pitchValues) {
-      sumPitch += num;
-    }
-    sumPitch /= pitchValues.Count;
- 
-    // Run our low pass filter.
-    lowPassResults = LowPassFilter(dbValue);
- 
-    // Decides whether this instance of the result could be a blow or not.
-    if (lowPassResults > -30 || sumPitch == 0) {
-      blowingTime += 1;
-    } else {
-      blowingTime = 0;
-    }
+
+  public void startRecording() {
+    pitchValues = new List<float>();
+    isRecording = true;
   }
- 
-  // Updates a record, by removing the oldest entry and adding the newest value (val).
-  private void UpdateRecords(float val, List<float> record) {
-    if (record.Count > recordedLength) {
-      record.RemoveAt(0);
+
+  public float stopAndGetAverage() {
+    isRecording = false;
+
+    float pitchSum = 0;
+    int validPitchs = 0;
+    
+    foreach(float num in pitchValues) {
+      pitchSum += num;
+
+      if (num > 0)
+        validPitchs ++;      
     }
-    record.Add(val);
+
+    return pitchSum / validPitchs;
   }
- 
-  /// Gives a result (I don't really understand this yet) based on the peak volume of the record
-  /// and the previous low pass results.
-  private float LowPassFilter(float peakVolume) {
-    return ALPHA * peakVolume + (1.0f - ALPHA) * lowPassResults;
+
+  public bool setAsDefaultInputIfPossible(AvailableInputs name, float targetPitch) {
+    // Checking if new targetPitch is too similar with any other
+    foreach(KeyValuePair<AvailableInputs, float> entry in targetPitchs) {
+      if (entry.Key == name) continue;
+
+      if (Mathf.Abs(targetPitch - entry.Value) < 2* epsilon)
+        return false;
+    }
+
+    targetPitchs[name] = targetPitch;
+
+    print(
+      "New pitch recorded for: " + AvailableInputs.GetName(typeof(AvailableInputs), name) +
+      " as: " + targetPitch
+    );
+
+    return true;
   }
 
 
@@ -203,21 +214,11 @@ public class MicHandle : MonoBehaviour {
   //  Input State Methods
   ///////
 
-  // public enum AvailableInputs {Swim1, Swim2, Attack, Jump};
-  // public enum InputStates {None, Pressed, JustPressed, Hold, Released};
-  // private Dictionary<AvailableInputs, float> targetPitchs;
-  // private Dictionary<AvailableInputs, InputStates> currentStates;
-
-  // private int holdCount = 0;
-  // public int holdThreshold = 10;
-
-
   private AvailableInputs checkLatestInput() {
     AvailableInputs currentInput = AvailableInputs.None;
     float minDifference = epsilon;
 
-    foreach(KeyValuePair<AvailableInputs, float> entry in targetPitchs)
-    {
+    foreach(KeyValuePair<AvailableInputs, float> entry in targetPitchs) {
       float difference = Mathf.Abs(pitchValue - entry.Value);
       if (difference < minDifference) {
         minDifference = difference;
@@ -271,12 +272,6 @@ public class MicHandle : MonoBehaviour {
     }
 
 
-
-
-
-    // UpdateRecords(dbValue, dbValues);
-    // UpdateRecords(pitchValue, pitchValues);
-
     if (DEBUG) {
       InputStates swim1;
       InputStates swim2;
@@ -288,27 +283,23 @@ public class MicHandle : MonoBehaviour {
   }
 
 
-  public bool getInputDown(AvailableInputs name) {
+  public bool getInputState(AvailableInputs name, InputStates targetState) {
     InputStates currentState;
 
     currentStates.TryGetValue(name, out currentState);
 
-    return currentState == InputStates.Pressed;
+    return currentState == targetState;
+  }
+
+  public bool getInputDown(AvailableInputs name) {
+    return getInputState(name, InputStates.Pressed);
   }
 
   public bool getInputUp(AvailableInputs name) {
-    InputStates currentState;
-
-    currentStates.TryGetValue(name, out currentState);
-
-    return currentState == InputStates.Released;
+    return getInputState(name, InputStates.Released);
   }
   
   public bool getInputHold(AvailableInputs name) {
-    InputStates currentState;
-
-    currentStates.TryGetValue(name, out currentState);
-
-    return currentState == InputStates.Hold;
+    return getInputState(name, InputStates.Hold);
   }
 }
