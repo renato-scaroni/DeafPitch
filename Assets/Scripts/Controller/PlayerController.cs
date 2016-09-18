@@ -276,7 +276,7 @@ public class PlayerController : MonoBehaviour
 	public void ResetPlayer ()
 	{
 		currentState = PlayerState.swimming;
-		// Set AnimationComplete
+		spineAnimationState.SetAnimation(0, swimAnimation, true);
 
 		lastKeyboardInput = KeyCode.Space;
 		lastAudioInput = MicHandle.AvailableInputs.None;
@@ -288,9 +288,13 @@ public class PlayerController : MonoBehaviour
 		currentSpeed = minSpeed;
 		currentDeaceleration = startDeaceleration;
 
-		Vector3 startPosition = transform.position;
-		startPosition.y = minHeight;
-		transform.position = startPosition;
+		Vector3 startPosition = GameManager.instance.mainCamera.transform.TransformPoint(new Vector3(-7f, 0, 0));
+
+		transform.position = new Vector3 (
+			startPosition.x,
+			minHeight,
+			0
+		);
 
 		alertState = false;
 	}
