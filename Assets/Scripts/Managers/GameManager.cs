@@ -30,7 +30,9 @@ public class GameManager : MonoBehaviour
 	public float screenWidth;
 	private int currentPersonType = -1;
 
-	public bool isPaused = false;
+	private bool isPaused = false;
+	private bool shouldReset = true;
+
 
 	GameObject getCurrentPerson ()
 	{
@@ -110,6 +112,8 @@ public class GameManager : MonoBehaviour
 
 			getCurrentPerson().GetComponent<AudioSource>().Play();
 		};
+
+		PauseGame();
 	}
 	
 	void Update () 
@@ -129,6 +133,7 @@ public class GameManager : MonoBehaviour
 
 	public void EndGame (bool won)
 	{
+		shouldReset = true;
 		endGameMenu.ShowMenu(scoreManager.currentScore, won);
 		PauseGame();
 	}
@@ -149,6 +154,8 @@ public class GameManager : MonoBehaviour
 
 	public void ResumeGame ()
 	{
+		if (shouldReset) ResetGame(false);
+
 		enabled = true;
 		isPaused = false;
 		playerController.ResumePlayer();
@@ -161,8 +168,10 @@ public class GameManager : MonoBehaviour
 		bombManager.ResumeBombs();
 	}
 
-	public void ResetGame ()
+	public void ResetGame (bool shouldResume)
 	{
+		shouldReset = false;
+
 		playerController.ResetPlayer();
 		scoreManager.ResetScore();
 		bombManager.ResetBombs();
@@ -174,6 +183,7 @@ public class GameManager : MonoBehaviour
 
 		StartCoroutine(CreateNewPersonDelayed(6));
 
-		ResumeGame();
+		if (shouldResume)
+			ResumeGame();
 	}
 }

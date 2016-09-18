@@ -23,11 +23,15 @@ public abstract class PersonController : MonoBehaviour
 	{
 		enabled = false;
 
+		foreach (Behaviour anim in animationControllers)
+			anim.enabled = false;
 	}
 
 	public void ResumePerson ()
 	{
 		enabled = true;
-		// animationController.enabled = true;
+
+		foreach (Behaviour anim in animationControllers)
+			anim.enabled = true;
 	}
 }

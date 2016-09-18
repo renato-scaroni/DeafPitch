@@ -7,6 +7,7 @@ public class EndGameMenu : MonoBehaviour {
 	public GameObject winMenu;
 	public GameObject loseMenu;
 	public GameObject inGameMenu;
+	public GameObject titleMenu;
 
 	// Use this for initialization
 	void Start () {
@@ -34,15 +35,14 @@ public class EndGameMenu : MonoBehaviour {
 		loseMenu.SetActive(false);
 		inGameMenu.SetActive(true);
 		
-		GameManager.instance.ResetGame();
+		GameManager.instance.ResetGame(true);
 	}
 
 	public void BackToStart ()
 	{
 		winMenu.SetActive(false);
 		loseMenu.SetActive(false);
-		inGameMenu.SetActive(true);
-
-		GameManager.instance.ResetGame();
+		inGameMenu.SetActive(false);
+		titleMenu.SetActive(false);
 	}
 }
