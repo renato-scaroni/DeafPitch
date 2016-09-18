@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class ScoreManager : MonoBehaviour {
+public class ScoreManager : MonoBehaviour 
+{
 
 	private List<GameObject> activeGhosts;
 	private List<GameObject> ghostPool;
 	public GameObject ghostPrefab;
 	public Camera mainCamera;
+	public Image ghostBarFill;
 
 	public int currentScore;
 	public int maxScore = 12; // Should be multiple of 3 
@@ -16,12 +19,14 @@ public class ScoreManager : MonoBehaviour {
 	void Start () {
     	activeGhosts = new List<GameObject>();
     	ghostPool = new List<GameObject>();
+		ghostBarFill.fillAmount = 0;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
+
 
 	public GameObject getGhost ()
 	{
@@ -67,7 +72,24 @@ public class ScoreManager : MonoBehaviour {
 		return currentScore >= maxScore;
 	}
 
+	public void UpdateGhostBar()
+	{
+		ghostBarFill.fillAmount = (float)(currentScore) / (float)(maxScore);
+	}
 
+	public int GetTier()
+	{
+		float lifePercent = (float)(currentScore) / (float)(maxScore);
+
+		if(life > 1f/4f * (float)(maxScore))
+			return 1;
+		if(life > 2f/4f * (float)(maxScore))
+			return 2;
+		if(life > 3f/4f * (float)(maxScore))
+			return 3;
+
+		return 0;
+	} 
 
 	////////
 	// Game Flow Control
@@ -96,6 +118,8 @@ public class ScoreManager : MonoBehaviour {
 
 		foreach (GameObject ghost in activeGhosts)
 			returnGhost(ghost, false);
+
+		UpdateGhostBar();
 			
     	activeGhosts = new List<GameObject>();
 	}
