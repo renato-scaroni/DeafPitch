@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
 	public float screenWidth;
 	private int currentPersonType = -1;
 
+	public bool isPaused = false;
+
 
 
 	GameObject getCurrentPerson ()
@@ -54,7 +56,11 @@ public class GameManager : MonoBehaviour
 
 
 		getCurrentPerson().transform.position = position;
-		getCurrentPerson().GetComponent<PersonController>().ResumePerson();
+
+		if (!isPaused)
+			getCurrentPerson().GetComponent<PersonController>().ResumePerson();
+		else
+			getCurrentPerson().GetComponent<PersonController>().PausePerson();
 	}
 
 
@@ -130,6 +136,7 @@ public class GameManager : MonoBehaviour
 	public void PauseGame ()
 	{
 		enabled = false;
+		isPaused = true;
 		playerController.PausePlayer();
 		mainCamera.GetComponent<CameraController>().PauseCamera();
 
@@ -143,6 +150,7 @@ public class GameManager : MonoBehaviour
 	public void ResumeGame ()
 	{
 		enabled = true;
+		isPaused = false;
 		playerController.ResumePlayer();
 		mainCamera.GetComponent<CameraController>().ResumeCamera();
 

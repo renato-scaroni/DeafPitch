@@ -194,8 +194,10 @@ public class MicHandle : MonoBehaviour {
     foreach(KeyValuePair<AvailableInputs, float> entry in targetPitchs) {
       if (entry.Key == name) continue;
 
-      if (Mathf.Abs(targetPitch - entry.Value) < 2* epsilon)
+      if (Mathf.Abs(targetPitch - entry.Value) < 2* epsilon) {
+        print("FAILED TO CREATE NEW INPUT!!!!");
         return false;
+      }
     }
 
     targetPitchs[name] = targetPitch;
