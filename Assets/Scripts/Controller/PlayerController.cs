@@ -52,6 +52,9 @@ public class PlayerController : MonoBehaviour
 	public delegate void AtePersonHandler();
 	public static event AtePersonHandler OnAtePerson;
 
+	public delegate void AlertHandler();
+	public static event AlertHandler OnAlert;
+
 	enum PlayerState {bite, swimming};
 	private PlayerState currentState;
 
