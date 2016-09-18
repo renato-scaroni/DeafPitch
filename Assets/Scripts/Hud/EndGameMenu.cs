@@ -4,12 +4,13 @@ using UnityEngine.UI;
 
 public class EndGameMenu : MonoBehaviour {
 	
-	public GameObject menu;
-	public Button closeButton;
+	public GameObject winMenu;
+	public GameObject loseMenu;
+	public GameObject inGameMenu;
 
 	// Use this for initialization
 	void Start () {
-		closeButton.onClick.AddListener(() => { HideMenu(); });
+		
 	}
 	
 	// Update is called once per frame
@@ -19,12 +20,29 @@ public class EndGameMenu : MonoBehaviour {
 
 	public void ShowMenu (int score, bool won)
 	{
-		menu.SetActive(true);
+		inGameMenu.SetActive(false);
+
+		if (won)
+			winMenu.SetActive(true);
+		else
+			loseMenu.SetActive(true);
 	}
 
-	public void HideMenu ()
+	public void RetryGame ()
 	{
-		menu.SetActive(false);
+		winMenu.SetActive(false);
+		loseMenu.SetActive(false);
+		inGameMenu.SetActive(true);
+		
+		GameManager.instance.ResetGame();
+	}
+
+	public void BackToStart ()
+	{
+		winMenu.SetActive(false);
+		loseMenu.SetActive(false);
+		inGameMenu.SetActive(true);
+
 		GameManager.instance.ResetGame();
 	}
 }
