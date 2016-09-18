@@ -9,9 +9,9 @@ public class FloatingPersonController : PersonController
 	private SkeletonAnimation skeletonAnimation;
 	private Spine.AnimationState spineAnimationState;
 	private bool firstPlay = true;
-
-	private enum AnimationStates {death, swim, none};
-	AnimationStates currentState;
+	 private enum AnimationStates {death, swim, none};
+	
+	private AnimationStates currentState;
 
 	void AnimationComplete(Spine.AnimationState state, int trackIndex, int loopCount)
 	{

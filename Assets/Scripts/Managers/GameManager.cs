@@ -30,13 +30,8 @@ public class GameManager : MonoBehaviour
 	public float screenWidth;
 	private int currentPersonType = -1;
 
-<<<<<<< HEAD
 	public bool isPaused = false;
 
-
-
-=======
->>>>>>> gameplay
 	GameObject getCurrentPerson ()
 	{
 		return currentPersonType == -1 ? null : personInstances[currentPersonType];
