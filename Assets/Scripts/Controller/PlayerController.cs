@@ -50,6 +50,9 @@ public class PlayerController : MonoBehaviour
 	public delegate void AtePersonHandler();
 	public static event AtePersonHandler OnAtePerson;
 
+	public delegate void AlertHandler();
+	public static event AlertHandler OnAlert;
+
 	private void MoveInputHandling()
 	{
 		bool input = false;
@@ -105,7 +108,6 @@ public class PlayerController : MonoBehaviour
 		print(other.gameObject);
         if(other.gameObject.tag == "Person")
 		{
-		print("TRIGGER!!!!!");
 			if(OnAtePerson != null)
 			{
 				OnAtePerson();
