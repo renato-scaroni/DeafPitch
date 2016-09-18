@@ -288,7 +288,7 @@ public class PlayerController : MonoBehaviour
 		currentSpeed = minSpeed;
 		currentDeaceleration = startDeaceleration;
 
-		Vector3 startPosition = GameManager.instance.mainCamera.transform.TransformPoint(new Vector3(-7f, 0, 0));
+		Vector3 startPosition = GameManager.instance.mainCamera.transform.TransformPoint(new Vector3(-6.5f, 0, 0));
 
 		transform.position = new Vector3 (
 			startPosition.x,

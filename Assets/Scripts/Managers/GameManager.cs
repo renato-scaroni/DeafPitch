@@ -69,9 +69,12 @@ public class GameManager : MonoBehaviour
 	public IEnumerator WaitAndDeActivate(float time)
 	{
 		yield return new WaitForSeconds(time);
-		getCurrentPerson().SetActive(false);
+		GameObject currentPerson = getCurrentPerson();
 
-		if (scoreManager.addScore(getCurrentPerson()))
+		currentPerson.SetActive(false);
+		bombManager.spawnBomb(currentPerson.transform.position.y);
+
+		if (scoreManager.addScore(currentPerson))
 			EndGame(true);
 		
 		else {
@@ -161,7 +164,7 @@ public class GameManager : MonoBehaviour
 
 		currentPersonType = -1;
 
-		StartCoroutine(CreateNewPersonDelayed(4));
+		StartCoroutine(CreateNewPersonDelayed(6));
 
 		ResumeGame();
 	}

@@ -9,13 +9,16 @@ public class BombManager : MonoBehaviour {
 	public GameObject bombPrefab;
 	public Camera mainCamera;
 
-	private float bombCD = 0;
-	private float targetCD = 0;
-	public float bombSpawnMaxTime = 7;
-	public float bombSpawnMinTime = 3; 
+	private float startPosX = 0;
+	private float currentDeltaX = 0;
+	private float targetDeltaPosX = 0;
+	public float bombSpawnMaxDeltaX = 7;
+	public float bombSpawnMinDeltaX = 3; 
 
 	public float minHeight = -4;
 	public float maxHeight = -0.9f;
+
+	public bool HARDCORE = false;
 
 
 	// Use this for initialization
@@ -27,13 +30,15 @@ public class BombManager : MonoBehaviour {
 		{
 			bomb.OnHit();
 		};
+
+		targetDeltaPosX = Random.Range(bombSpawnMinDeltaX, bombSpawnMaxDeltaX);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		bombCD += Time.deltaTime;
+		currentDeltaX = mainCamera.transform.position.x - startPosX;
 
-		if (bombCD > targetCD)
+		if (currentDeltaX > targetDeltaPosX)
 			spawnRandomBomb();
 	}
 
@@ -67,9 +72,11 @@ public class BombManager : MonoBehaviour {
 
 	public void spawnBomb(float targetY)
 	{
-		if (bombCD < bombSpawnMinTime) return;
-		bombCD = 0;
-		targetCD = Random.Range(bombSpawnMinTime, bombSpawnMaxTime);
+		if (!HARDCORE && currentDeltaX < bombSpawnMinDeltaX) return;
+
+		currentDeltaX = 0;
+		startPosX = mainCamera.transform.position.x;
+		targetDeltaPosX = Random.Range(bombSpawnMinDeltaX, bombSpawnMaxDeltaX);
 
 		GameObject newBomb = getBomb();
 
@@ -112,7 +119,7 @@ public class BombManager : MonoBehaviour {
 
 	public void ResetBombs()
 	{
-		bombCD = 0;
+		currentDeltaX = 0;
 
 		foreach (GameObject bomb in activeBombs)
 			returnBomb(bomb, false);
