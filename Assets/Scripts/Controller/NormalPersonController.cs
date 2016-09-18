@@ -29,6 +29,7 @@ public class NormalPersonController : PersonController
 	void OnEnable ()
 	{
 		alert.SetActive(false);
+		speed = normalSpeed;
 		PlayerController.OnDesperate += OnDesperate;
 		PlayerController.OnAlert += OnAlert;
 	}
