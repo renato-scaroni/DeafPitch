@@ -25,8 +25,7 @@
      void Awake () {
          // Get the current sprite with an unscaled size
          sprite = GetComponent<SpriteRenderer>();
-         Vector2 spriteSize = new Vector2(sprite.bounds.size.x / transform.localScale.x, sprite.bounds.size.y / transform.localScale.y);
- 
+         
          // Generate a child prefab of the sprite renderer
          GameObject childPrefab = new GameObject();
 		 childPrefab.transform.localScale = new Vector3(tileScalex, 1, 1);

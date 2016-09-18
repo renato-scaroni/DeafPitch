@@ -5,29 +5,36 @@ using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour 
 {
-	public GameObject player; 
-	public Camera mainCamera;
-	public ScoreManager scoreManager;
-	public GameObject[] personPrefabs;
-	public float normalProbability;
-	public GameObject bloodAnimation;
-
-	public PlayerController playerController
-	{
-		get;
-		private set;
-	}
-	
-	private GameObject[] personInstances;
-	private Vector3 defaultPosition;
-	private float screenWidth;
-	private int personTypeCount;
-	private int currentPersonType;
 
 	static public GameManager instance
 	{
 		get;
 		private set;
+	}
+
+	
+	public GameObject player; 
+	public Camera mainCamera;
+	public ScoreManager scoreManager;
+	public BombManager bombManager;
+	public GameObject bloodAnimation;
+	public GameObject[] personPrefabs;
+	public EndGameMenu endGameMenu;
+
+	public float normalProbability;
+	public float maxDistanceToLose = 10;
+
+	private PlayerController playerController;
+	private GameObject[] personInstances;
+	private Vector3 defaultPosition;
+	public float screenWidth;
+	private int currentPersonType = -1;
+
+
+
+	GameObject getCurrentPerson ()
+	{
+		return currentPersonType == -1 ? null : personInstances[currentPersonType];
 	}
 
 	public void CreateNewPerson(Vector3 position)
@@ -36,18 +43,18 @@ public class GameManager : MonoBehaviour
 
 		currentPersonType = uniform > normalProbability ? 1 : 0;
 
-		print ("CreateNewPerson personType " + currentPersonType);
-
-		if(personInstances[currentPersonType] == null)
+		if(getCurrentPerson() == null)
 		{
 			personInstances[currentPersonType] = Instantiate(personPrefabs[currentPersonType]) as GameObject;
 		}
 		else
 		{
-			personInstances[currentPersonType].SetActive(true);
+			getCurrentPerson().SetActive(true);
 		}
 
-		personInstances[currentPersonType].transform.position = position;
+
+		getCurrentPerson().transform.position = position;
+		getCurrentPerson().GetComponent<PersonController>().ResumePerson();
 	}
 
 
@@ -62,10 +69,22 @@ public class GameManager : MonoBehaviour
 	public IEnumerator WaitAndDeActivate(float time)
 	{
 		yield return new WaitForSeconds(time);
-		personInstances[currentPersonType].SetActive(false);
-		bloodAnimation.transform.position = player.transform.position + -Vector3.up * 1.7f + Vector3.right * 2f;
+		GameObject currentPerson = getCurrentPerson();
+
+		currentPerson.SetActive(false);
+		bombManager.spawnBomb(currentPerson.transform.position.y);
+
+		if (scoreManager.addScore(currentPerson))
+			EndGame(true);
+		
+		else {
+			// currentPersonType = -1;
+			StartCoroutine(CreateNewPersonDelayed(4));
+			bloodAnimation.transform.position = player.transform.position + -Vector3.up * 1.7f + Vector3.right * 2f;
+		}
+
 	}
-// bloodAnimation.SetActive(false);
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -73,23 +92,27 @@ public class GameManager : MonoBehaviour
 		float aspectRatio = (float)(Screen.width) / (float)(Screen.height);
 		screenWidth = mainCamera.orthographicSize * aspectRatio;
 		
-		defaultPosition = new Vector3(screenWidth*3/4, 0, 0);
+		defaultPosition = new Vector3(screenWidth + 1, 0.8f, 0);
 		playerController = player.GetComponent<PlayerController>();
 		personInstances = new GameObject[personPrefabs.Length];
-		CreateNewPerson(defaultPosition);
+
+		StartCoroutine(CreateNewPersonDelayed(2));
+
 		PlayerController.OnAtePerson += () =>
 		{
 			bloodAnimation.GetComponent<Animator>().SetTrigger("Reset");
 			bloodAnimation.SetActive(true);
 			StartCoroutine(WaitAndDeActivate(.25f));
-			StartCoroutine(CreateNewPersonDelayed(1));
 		};
-		personTypeCount = personPrefabs.Length;
 	}
 	
 	void Update () 
 	{
-	
+		GameObject currentPerson = getCurrentPerson();
+		if (currentPerson == null) return;
+
+		if (currentPerson.transform.position.x - mainCamera.transform.position.x > maxDistanceToLose)
+			EndGame(false);
 	}
 
 
@@ -98,15 +121,51 @@ public class GameManager : MonoBehaviour
 	// Game Flow Control
 	///////
 
+	public void EndGame (bool won)
+	{
+		endGameMenu.ShowMenu(scoreManager.currentScore, won);
+		PauseGame();
+	}
+
 	public void PauseGame ()
 	{
-		player.GetComponent<PlayerController>().PausePlayer();
-		mainCamera.GetComponent<CameraController>().enabled = false;
+		enabled = false;
+		playerController.PausePlayer();
+		mainCamera.GetComponent<CameraController>().PauseCamera();
+
+		GameObject currentPerson = getCurrentPerson();
+		if (currentPerson != null) currentPerson.GetComponent<PersonController>().PausePerson();
+
+		scoreManager.PauseScore();
+		bombManager.PauseBombs();
 	}
 
 	public void ResumeGame ()
 	{
-		player.GetComponent<PlayerController>().ResumePlayer();
-		mainCamera.GetComponent<CameraController>().enabled = true;
+		enabled = true;
+		playerController.ResumePlayer();
+		mainCamera.GetComponent<CameraController>().ResumeCamera();
+
+		GameObject currentPerson = getCurrentPerson();
+		if (currentPerson != null) currentPerson.GetComponent<PersonController>().ResumePerson();
+
+		scoreManager.ResumeScore();
+		bombManager.ResumeBombs();
+	}
+
+	public void ResetGame ()
+	{
+		playerController.ResetPlayer();
+		scoreManager.ResetScore();
+		bombManager.ResetBombs();
+
+		GameObject currentPerson = getCurrentPerson();
+		if (currentPerson != null) currentPerson.SetActive(false);
+
+		currentPersonType = -1;
+
+		StartCoroutine(CreateNewPersonDelayed(6));
+
+		ResumeGame();
 	}
 }

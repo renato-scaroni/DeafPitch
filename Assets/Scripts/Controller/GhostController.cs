@@ -11,6 +11,10 @@ public class GhostController : MonoBehaviour {
 	public float maxOscilation = 0.7f;
 	public float startScale = 2;
 
+	public Behaviour animationController;
+
+
+
 	// Use this for initialization
 	void Start () {
 	
@@ -48,5 +52,18 @@ public class GhostController : MonoBehaviour {
 		enabled = true;
 		animationPeriods = Random.Range(2, 4);
 		transform.localScale = new Vector3(startScale, startScale, 1);
+	}
+
+
+	public void PauseGhost ()
+	{
+		enabled = false;
+		animationController.enabled = false;
+	}
+
+	public void ResumeGhost ()
+	{
+		enabled = true;
+		animationController.enabled = true;
 	}
 }

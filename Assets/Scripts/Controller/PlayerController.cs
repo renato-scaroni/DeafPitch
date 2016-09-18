@@ -4,6 +4,15 @@ using Spine.Unity;
 
 public class PlayerController : MonoBehaviour 
 {
+	public PlayerController instance
+	{
+		get;
+		private set;
+	}
+
+	///////
+	// Mechanics Fine tunning
+	///////
 
 	public float minSpeed = 0.01f;
 	public float maxSpeed = 1f;
@@ -26,8 +35,10 @@ public class PlayerController : MonoBehaviour
 	private float lastMoveInput2 = 0.1f;
 	private float speedFactor = 0;	
 
-
-	// Input order variables
+	///////
+	// Input Order Controll
+	///////
+	
 	public bool DEBUG = false;
 
 	private KeyCode moveKeyboardInput1 = KeyCode.Z;
@@ -38,11 +49,14 @@ public class PlayerController : MonoBehaviour
 	private KeyCode lastKeyboardInput = KeyCode.Space;
 	private MicHandle.AvailableInputs lastAudioInput = MicHandle.AvailableInputs.None;
 
-	
-	// Spine Variables
+	///////
+	// Animation Controll
+	///////
+
+	enum PlayerState {bite, swimming};
+	private PlayerState currentState;
 	private SkeletonAnimation skeletonAnimation;
 	private Spine.AnimationState spineAnimationState;
-	// private Spine.Skeleton skeleton;
 
 	private string swimAnimation = "idle";
 	private string attackAnimation = "bite";
@@ -50,7 +64,10 @@ public class PlayerController : MonoBehaviour
 	public float maxAnimationScale = 3;
 	public float minAnimationScale = 1;
 
+	///////
 	// Person Interactions
+	///////
+
 	public delegate void AtePersonHandler();
 	public static event AtePersonHandler OnAtePerson;
 
@@ -60,10 +77,18 @@ public class PlayerController : MonoBehaviour
 	public delegate void DesperateHandler();
 	public static event DesperateHandler OnDesperate;
 
-	enum PlayerState {bite, swimming};
-	private PlayerState currentState;
+	///////
+	// Bomb Interactions
+	///////
+
+	public delegate void HitBombHandler(BombController bomb);
+	public static event HitBombHandler OnHitBomb;
 
 
+
+	///////
+	// Methods
+	///////
 
 	private bool checkInput(KeyCode moveKeyboardInput, MicHandle.AvailableInputs moveAudioInput)
 	{
@@ -154,24 +179,19 @@ public class PlayerController : MonoBehaviour
 				spineAnimationState.SetAnimation(0, attackAnimation, false);
 			}
 		}
+
+        else if(other.gameObject.tag == "Bomb")
+		{
+			if(OnHitBomb != null)
+			{
+				OnHitBomb(other.gameObject.GetComponent<BombController>());
+
+				// TODO : Change to Exploded animation
+				// currentState = PlayerState.bite;
+				// spineAnimationState.SetAnimation(0, attackAnimation, false);
+			}
+		}
     }
-
-	public void PausePlayer ()
-	{
-		enabled = false;
-		skeletonAnimation.enabled = false;
-	}
-
-	public void ResumePlayer ()
-	{
-		enabled = true;
-
-		spineAnimationState.SetAnimation(
-			0,
-			currentState == PlayerState.swimming ? swimAnimation : attackAnimation,
-			true
-		);
-	}
 
 	void AnimationComplete(Spine.AnimationState state, int trackIndex, int loopCount)
 	{
@@ -184,6 +204,8 @@ public class PlayerController : MonoBehaviour
 
 	void Start () 
 	{
+		instance = this;
+
 		skeletonAnimation = GetComponent<SkeletonAnimation>();
 		spineAnimationState = skeletonAnimation.state;
 		spineAnimationState.SetAnimation(0, swimAnimation, true);
@@ -248,5 +270,44 @@ public class PlayerController : MonoBehaviour
 		targetPosition.y = Mathf.Lerp(position.y, targetY, Time.deltaTime);
 
 		transform.position = targetPosition;
+	}
+
+
+	public void ResetPlayer ()
+	{
+		currentState = PlayerState.swimming;
+		spineAnimationState.SetAnimation(0, swimAnimation, true);
+
+		lastKeyboardInput = KeyCode.Space;
+		lastAudioInput = MicHandle.AvailableInputs.None;
+
+		lastMoveInput1 = 0;
+		lastMoveInput2 = 0.1f;
+		speedFactor = 0;
+
+		currentSpeed = minSpeed;
+		currentDeaceleration = startDeaceleration;
+
+		Vector3 startPosition = GameManager.instance.mainCamera.transform.TransformPoint(new Vector3(-6.5f, 0, 0));
+
+		transform.position = new Vector3 (
+			startPosition.x,
+			minHeight,
+			0
+		);
+
+		alertState = false;
+	}
+
+	public void PausePlayer ()
+	{
+		enabled = false;
+		skeletonAnimation.enabled = false;
+	}
+
+	public void ResumePlayer ()
+	{
+		enabled = true;
+		skeletonAnimation.enabled = true;
 	}
 }
