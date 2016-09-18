@@ -10,9 +10,11 @@
  public class RepeatSpriteBoundary : MonoBehaviour {
 	 public Sprite spriteImg;
 	 public CameraController mainCamera;
+	 public float moveIntervalFactor = 1;
+	 public float tileScalex = 1;
 
 	 private int lastChildIndex;
-	 private int ntiles;
+	 public int ntiles;
      private SpriteRenderer sprite;
 	 private float moveInterval;
 	 private SpriteRenderer childSprite;
@@ -27,9 +29,10 @@
  
          // Generate a child prefab of the sprite renderer
          GameObject childPrefab = new GameObject();
+		 childPrefab.transform.localScale = new Vector3(tileScalex, 1, 1);
          childSprite = childPrefab.AddComponent<SpriteRenderer>();
 		 childSprite.color = sprite.color;
-		 Vector3 targetposition = transform.position - sprite.bounds.size.x*1/4 * Vector3.right;
+		 Vector3 targetposition = transform.position - childSprite.bounds.size.x*1/4 * Vector3.right;
          childPrefab.transform.position = targetposition;
          childSprite.sprite = spriteImg;
 		 childSprite.sortingOrder = sprite.sortingOrder;
@@ -37,14 +40,14 @@
 
          // Loop through and spit out repeated tiles
          GameObject child;
-		 ntiles = (int)Mathf.Ceil(sprite.bounds.size.x/childSprite.bounds.size.x) + 2;
+		//  ntiles = 6;//(int)Mathf.Ceil(sprite.bounds.size.x/childSprite.bounds.size.x) + 2;
 		 children = new Transform[ntiles];
 		 children[0] = childPrefab.transform; 
 		//  (int)Mathf.Round(sprite.bounds.size.y)
          for (int i = 1; i < ntiles; i++) {
              child = Instantiate(childPrefab) as GameObject;
              child.transform.parent = transform;
-             child.transform.position = targetposition + (new Vector3(spriteSize.x, 0, 0) * i);
+             child.transform.position = targetposition + (new Vector3(childSprite.bounds.size.x / transform.localScale.x, 0, 0) * i);
 			 children[i] = child.transform;
          }
 		 
@@ -69,7 +72,7 @@
 	float timeCount = 0;
 	 void Update()
 	 {
-		 moveInterval = childSpriteSizeX/mainCamera.currentSpeed;
+		 moveInterval = childSpriteSizeX/mainCamera.currentSpeed *moveIntervalFactor;
 		 timeCount += 1;
 		 
 		 if(timeCount > moveInterval)

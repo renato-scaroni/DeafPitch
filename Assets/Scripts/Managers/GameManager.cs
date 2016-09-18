@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 	public Camera mainCamera;
 	public GameObject[] personPrefabs;
 	public float normalProbability;
+	public GameObject bloodAnimation;
 
 	public PlayerController playerController
 	{
@@ -57,6 +58,13 @@ public class GameManager : MonoBehaviour
 		CreateNewPerson(position);
 	}
 
+	public IEnumerator WaitAndDeActivate(float time)
+	{
+		yield return new WaitForSeconds(time);
+		personInstances[currentPersonType].SetActive(false);
+		bloodAnimation.transform.position = player.transform.position + -Vector3.up * 1.7f + Vector3.right * 2f;
+	}
+// bloodAnimation.SetActive(false);
 	// Use this for initialization
 	void Start () 
 	{
@@ -70,7 +78,9 @@ public class GameManager : MonoBehaviour
 		CreateNewPerson(defaultPosition);
 		PlayerController.OnAtePerson += () =>
 		{
-			personInstances[currentPersonType].SetActive(false);
+			bloodAnimation.GetComponent<Animator>().SetTrigger("Reset");
+			bloodAnimation.SetActive(true);
+			StartCoroutine(WaitAndDeActivate(.25f));
 			StartCoroutine(CreateNewPersonDelayed(1));
 		};
 		personTypeCount = personPrefabs.Length;

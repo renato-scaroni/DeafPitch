@@ -1,0 +1,13 @@
+
+alert.png
+size: 512,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+alert-01
+  rotate: false
+  xy: 2, 2
+  size: 407, 408
+  orig: 407, 408
+  offset: 0, 0
+  index: -1

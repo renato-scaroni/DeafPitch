@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
 	public float minHeight = -4.5f; 
 	public float maxHeight = 0;
 	public float maxInputDiff = 1f;
+	public bool alertState = false;
+	public float alertStateTime;
 
 	public float deacelerationDelta = 0.1f;
 	public float startDeaceleration = 15;
@@ -54,6 +56,9 @@ public class PlayerController : MonoBehaviour
 
 	public delegate void AlertHandler();
 	public static event AlertHandler OnAlert;
+
+	public delegate void DesperateHandler();
+	public static event DesperateHandler OnDesperate;
 
 	enum PlayerState {bite, swimming};
 	private PlayerState currentState;
@@ -161,7 +166,6 @@ public class PlayerController : MonoBehaviour
 	{
 		enabled = true;
 		spineAnimationState.SetAnimation(0, swimAnimation, true);
-		skeleton = skeletonAnimation.skeleton;
 		currentState = PlayerState.swimming;
 	}
 
@@ -185,6 +189,19 @@ public class PlayerController : MonoBehaviour
 		spineAnimationState.Complete += AnimationComplete;
 	}
 
+	public float safetyAlertWait = 1f;
+	public IEnumerator AlertState()
+	{
+		if(OnAlert != null)
+		{
+			OnAlert();
+		}
+		yield return new WaitForSeconds(safetyAlertWait);
+		alertState = true;
+		yield return new WaitForSeconds(alertStateTime);
+		alertState = false;
+	}
+
 	// Update is called once per frame
 	void Update () 
 	{
@@ -202,7 +219,19 @@ public class PlayerController : MonoBehaviour
 
 		// DO PERSON ALERT HERE
 		if (currentThreshold < newSpeed - currentSpeed)
-			print("ALERT!!!!");
+		{
+			if(!alertState)
+			{
+				StartCoroutine(AlertState());
+			}
+			else
+			{
+				if(OnDesperate != null)
+				{
+					OnDesperate();
+				}
+			}
+		}
 
 		if(currentState == PlayerState.swimming)
 			setAnimationTimeScale(currentSpeed);

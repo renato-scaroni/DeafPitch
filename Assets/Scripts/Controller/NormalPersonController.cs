@@ -6,8 +6,21 @@ public class NormalPersonController : PersonController
 	private Animator animator;
 	public float desperateSpeed = .06f;
 	public float normalSpeed = .03f;
-	
+	public GameObject alert;
+	public float totalAlertTime = 2f;
+
+	public IEnumerator AlertState()
+	{
+		yield return new WaitForSeconds(totalAlertTime);
+		alert.SetActive(false);
+	}
+
 	void OnAlert()
+	{
+		alert.SetActive(true);
+	}
+
+	void OnDesperate()
 	{
 		speed = desperateSpeed;
 		animator.SetBool("Desperate", true);
@@ -15,11 +28,14 @@ public class NormalPersonController : PersonController
 
 	void OnEnable ()
 	{
+		alert.SetActive(false);
+		PlayerController.OnDesperate += OnDesperate;
 		PlayerController.OnAlert += OnAlert;
 	}
 
 	void OnDisable ()
 	{
+		PlayerController.OnDesperate -= OnDesperate;
 		PlayerController.OnAlert -= OnAlert;
 	}
 
