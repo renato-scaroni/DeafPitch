@@ -110,7 +110,10 @@ public class GameManager : MonoBehaviour
 			bloodAnimation.SetActive(true);
 			StartCoroutine(WaitAndDeActivate(.25f));
 
-			getCurrentPerson().GetComponent<AudioSource>().Play();
+			GameObject currentPerson = getCurrentPerson();
+			if (currentPerson == null) return;
+			
+			currentPerson.GetComponent<AudioSource>().Play();
 		};
 
 		PauseGame();
@@ -134,7 +137,7 @@ public class GameManager : MonoBehaviour
 	public void EndGame (bool won)
 	{
 		shouldReset = true;
-		endGameMenu.ShowMenu(scoreManager.currentScore, won);
+		endGameMenu.ShowMenu(scoreManager.GetTier(), won);
 		PauseGame();
 	}
 

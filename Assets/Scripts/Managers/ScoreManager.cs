@@ -81,14 +81,9 @@ public class ScoreManager : MonoBehaviour
 	{
 		float lifePercent = (float)(currentScore) / (float)(maxScore);
 
-		if(lifePercent > 1f/4f * (float)(maxScore))
-			return 1;
-		if(lifePercent > 2f/4f * (float)(maxScore))
-			return 2;
-		if(lifePercent > 3f/4f * (float)(maxScore))
-			return 3;
+		int tierAmount = (int) (maxScore / 3);
 
-		return 0;
+		return (int)Mathf.Floor(currentScore / tierAmount);
 	} 
 
 	////////
