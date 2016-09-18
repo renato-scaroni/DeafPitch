@@ -1,0 +1,20 @@
+
+bomb.png
+size: 1024,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+mine0001
+  rotate: false
+  xy: 2, 2
+  size: 365, 367
+  orig: 365, 367
+  offset: 0, 0
+  index: -1
+mine0002
+  rotate: false
+  xy: 369, 2
+  size: 365, 367
+  orig: 365, 367
+  offset: 0, 0
+  index: -1

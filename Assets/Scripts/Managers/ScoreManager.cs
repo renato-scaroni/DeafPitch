@@ -67,7 +67,27 @@ public class ScoreManager : MonoBehaviour {
 		return currentScore >= maxScore;
 	}
 
-	// public void consolidate
+
+
+	////////
+	// Game Flow Control
+	///////
+
+	public void PauseScore ()
+	{
+		enabled = false;
+		
+		foreach (GameObject ghost in activeGhosts)
+			ghost.GetComponent<GhostController>().PauseGhost();
+	}
+
+	public void ResumeScore ()
+	{
+		enabled = true;
+
+		foreach (GameObject ghost in activeGhosts)
+			ghost.GetComponent<GhostController>().ResumeGhost();
+	}
 
 
 	public void ResetScore()
@@ -76,5 +96,7 @@ public class ScoreManager : MonoBehaviour {
 
 		foreach (GameObject ghost in activeGhosts)
 			returnGhost(ghost, false);
+			
+    	activeGhosts = new List<GameObject>();
 	}
 }

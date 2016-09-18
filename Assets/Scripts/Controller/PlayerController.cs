@@ -10,6 +10,10 @@ public class PlayerController : MonoBehaviour
 		private set;
 	}
 
+	///////
+	// Mechanics Fine tunning
+	///////
+
 	public float minSpeed = 0.01f;
 	public float maxSpeed = 1f;
 	public float minHeight = -4.5f; 
@@ -31,8 +35,10 @@ public class PlayerController : MonoBehaviour
 	private float lastMoveInput2 = 0.1f;
 	private float speedFactor = 0;	
 
-
-	// Input order variables
+	///////
+	// Input Order Controll
+	///////
+	
 	public bool DEBUG = false;
 
 	private KeyCode moveKeyboardInput1 = KeyCode.Z;
@@ -43,11 +49,14 @@ public class PlayerController : MonoBehaviour
 	private KeyCode lastKeyboardInput = KeyCode.Space;
 	private MicHandle.AvailableInputs lastAudioInput = MicHandle.AvailableInputs.None;
 
-	
-	// Spine Variables
+	///////
+	// Animation Controll
+	///////
+
+	enum PlayerState {bite, swimming};
+	private PlayerState currentState;
 	private SkeletonAnimation skeletonAnimation;
 	private Spine.AnimationState spineAnimationState;
-	// private Spine.Skeleton skeleton;
 
 	private string swimAnimation = "idle";
 	private string attackAnimation = "bite";
@@ -55,7 +64,10 @@ public class PlayerController : MonoBehaviour
 	public float maxAnimationScale = 3;
 	public float minAnimationScale = 1;
 
+	///////
 	// Person Interactions
+	///////
+
 	public delegate void AtePersonHandler();
 	public static event AtePersonHandler OnAtePerson;
 
@@ -65,10 +77,18 @@ public class PlayerController : MonoBehaviour
 	public delegate void DesperateHandler();
 	public static event DesperateHandler OnDesperate;
 
-	enum PlayerState {bite, swimming};
-	private PlayerState currentState;
+	///////
+	// Bomb Interactions
+	///////
+
+	public delegate void HitBombHandler(BombController bomb);
+	public static event HitBombHandler OnHitBomb;
 
 
+
+	///////
+	// Methods
+	///////
 
 	private bool checkInput(KeyCode moveKeyboardInput, MicHandle.AvailableInputs moveAudioInput)
 	{
@@ -157,6 +177,18 @@ public class PlayerController : MonoBehaviour
 				OnAtePerson();
 				currentState = PlayerState.bite;
 				spineAnimationState.SetAnimation(0, attackAnimation, false);
+			}
+		}
+
+        else if(other.gameObject.tag == "Bomb")
+		{
+			if(OnHitBomb != null)
+			{
+				OnHitBomb(other.gameObject.GetComponent<BombController>());
+
+				// TODO : Change to Exploded animation
+				// currentState = PlayerState.bite;
+				// spineAnimationState.SetAnimation(0, attackAnimation, false);
 			}
 		}
     }

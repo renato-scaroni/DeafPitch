@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
 	public GameObject player; 
 	public Camera mainCamera;
 	public ScoreManager scoreManager;
+	public BombManager bombManager;
 	public GameObject bloodAnimation;
 	public GameObject[] personPrefabs;
 	public EndGameMenu endGameMenu;
@@ -26,14 +27,14 @@ public class GameManager : MonoBehaviour
 	private PlayerController playerController;
 	private GameObject[] personInstances;
 	private Vector3 defaultPosition;
-	private float screenWidth;
-	private int currentPersonType = 0;
+	public float screenWidth;
+	private int currentPersonType = -1;
 
 
 
 	GameObject getCurrentPerson ()
 	{
-		return personInstances[currentPersonType];
+		return currentPersonType == -1 ? null : personInstances[currentPersonType];
 	}
 
 	public void CreateNewPerson(Vector3 position)
@@ -51,7 +52,9 @@ public class GameManager : MonoBehaviour
 			getCurrentPerson().SetActive(true);
 		}
 
+
 		getCurrentPerson().transform.position = position;
+		getCurrentPerson().GetComponent<PersonController>().ResumePerson();
 	}
 
 
@@ -72,6 +75,7 @@ public class GameManager : MonoBehaviour
 			EndGame(true);
 		
 		else {
+			// currentPersonType = -1;
 			StartCoroutine(CreateNewPersonDelayed(4));
 			bloodAnimation.transform.position = player.transform.position + -Vector3.up * 1.7f + Vector3.right * 2f;
 		}
@@ -85,7 +89,7 @@ public class GameManager : MonoBehaviour
 		float aspectRatio = (float)(Screen.width) / (float)(Screen.height);
 		screenWidth = mainCamera.orthographicSize * aspectRatio;
 		
-		defaultPosition = new Vector3(screenWidth*3/4, 0, 0);
+		defaultPosition = new Vector3(screenWidth + 1, 0.8f, 0);
 		playerController = player.GetComponent<PlayerController>();
 		personInstances = new GameObject[personPrefabs.Length];
 
@@ -125,24 +129,39 @@ public class GameManager : MonoBehaviour
 		enabled = false;
 		playerController.PausePlayer();
 		mainCamera.GetComponent<CameraController>().PauseCamera();
-		getCurrentPerson().GetComponent<PersonController>().PausePerson();
+
+		GameObject currentPerson = getCurrentPerson();
+		if (currentPerson != null) currentPerson.GetComponent<PersonController>().PausePerson();
+
+		scoreManager.PauseScore();
+		bombManager.PauseBombs();
 	}
 
 	public void ResumeGame ()
 	{
-		// enabled = true;
+		enabled = true;
 		playerController.ResumePlayer();
 		mainCamera.GetComponent<CameraController>().ResumeCamera();
-		getCurrentPerson().GetComponent<PersonController>().ResumePerson();
+
+		GameObject currentPerson = getCurrentPerson();
+		if (currentPerson != null) currentPerson.GetComponent<PersonController>().ResumePerson();
+
+		scoreManager.ResumeScore();
+		bombManager.ResumeBombs();
 	}
 
 	public void ResetGame ()
 	{
 		playerController.ResetPlayer();
 		scoreManager.ResetScore();
+		bombManager.ResetBombs();
 
-		getCurrentPerson().SetActive(false);
-		StartCoroutine(CreateNewPersonDelayed(0));
+		GameObject currentPerson = getCurrentPerson();
+		if (currentPerson != null) currentPerson.SetActive(false);
+
+		currentPersonType = -1;
+
+		StartCoroutine(CreateNewPersonDelayed(4));
 
 		ResumeGame();
 	}
