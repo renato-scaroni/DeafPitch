@@ -18,16 +18,16 @@ public class AudioSettingsMenu : MonoBehaviour {
 	void Start () {
 		Swim1Button.onClick.AddListener(() => { ToggleRecording(MicHandle.AvailableInputs.Swim1); });
 		Swim2Button.onClick.AddListener(() => { ToggleRecording(MicHandle.AvailableInputs.Swim2); });
-		PauseButton.onClick.AddListener(() => { 
-			isOnMenu = !isOnMenu; 
+		PauseButton.onClick.AddListener(() => {
+			isOnMenu = !isOnMenu;
 		
-			Swim1Button.gameObject.SetActive(isOnMenu); 
-			Swim2Button.gameObject.SetActive(isOnMenu); 
+			Swim1Button.gameObject.SetActive(isOnMenu);
+			Swim2Button.gameObject.SetActive(isOnMenu);
 		
-			if (isOnMenu) 
-				GameManager.instance.PauseGame(); 
-			else 
-				GameManager.instance.ResumeGame(); 
+			if (isOnMenu)
+				GameManager.instance.PauseGame();
+			else
+				GameManager.instance.ResumeGame();
 		});
 	}
 	

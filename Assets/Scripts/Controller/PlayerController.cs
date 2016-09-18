@@ -4,6 +4,11 @@ using Spine.Unity;
 
 public class PlayerController : MonoBehaviour 
 {
+	public PlayerController instance
+	{
+		get;
+		private set;
+	}
 
 	public float minSpeed = 0.01f;
 	public float maxSpeed = 1f;
@@ -156,18 +161,6 @@ public class PlayerController : MonoBehaviour
 		}
     }
 
-	public void PausePlayer ()
-	{
-		enabled = false;
-		skeletonAnimation.enabled = false;
-	}
-
-	public void ResumePlayer ()
-	{
-		enabled = true;
-		skeletonAnimation.enabled = true;
-	}
-
 	void AnimationComplete(Spine.AnimationState state, int trackIndex, int loopCount)
 	{
 		if(currentState == PlayerState.bite)
@@ -179,6 +172,8 @@ public class PlayerController : MonoBehaviour
 
 	void Start () 
 	{
+		instance = this;
+
 		skeletonAnimation = GetComponent<SkeletonAnimation>();
 		spineAnimationState = skeletonAnimation.state;
 		spineAnimationState.SetAnimation(0, swimAnimation, true);
@@ -243,5 +238,40 @@ public class PlayerController : MonoBehaviour
 		targetPosition.y = Mathf.Lerp(position.y, targetY, Time.deltaTime);
 
 		transform.position = targetPosition;
+	}
+
+
+	public void ResetPlayer ()
+	{
+		currentState = PlayerState.swimming;
+		// Set AnimationComplete
+
+		lastKeyboardInput = KeyCode.Space;
+		lastAudioInput = MicHandle.AvailableInputs.None;
+
+		lastMoveInput1 = 0;
+		lastMoveInput2 = 0.1f;
+		speedFactor = 0;
+
+		currentSpeed = minSpeed;
+		currentDeaceleration = startDeaceleration;
+
+		Vector3 startPosition = transform.position;
+		startPosition.y = minHeight;
+		transform.position = startPosition;
+
+		alertState = false;
+	}
+
+	public void PausePlayer ()
+	{
+		enabled = false;
+		skeletonAnimation.enabled = false;
+	}
+
+	public void ResumePlayer ()
+	{
+		enabled = true;
+		skeletonAnimation.enabled = true;
 	}
 }

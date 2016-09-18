@@ -10,6 +10,7 @@ public class ScoreManager : MonoBehaviour {
 	public Camera mainCamera;
 
 	public int currentScore;
+	public int maxScore = 12; // Should be multiple of 3 
 
 	// Use this for initialization
 	void Start () {
@@ -41,17 +42,17 @@ public class ScoreManager : MonoBehaviour {
 		return newGhost;
 	}
 
-	public void returnGhost (GameObject ghost)
+	public void returnGhost (GameObject ghost, bool shouldRemoveActive)
 	{
 		ghost.SetActive(false);
 
 		ghostPool.Add(ghost);
-		activeGhosts.Remove(ghost);
+
+		if (shouldRemoveActive)
+			activeGhosts.Remove(ghost);
 	}
 
-
-
-	public void addScore(GameObject person)
+	public bool addScore(GameObject person)
 	{
 		currentScore ++;
 
@@ -60,7 +61,20 @@ public class ScoreManager : MonoBehaviour {
 		GhostController ghostController = newGhost.GetComponent<GhostController>();
 		ghostController.startAnimation(
 			mainCamera.transform.InverseTransformPoint(person.transform.position),
-			new Vector3(-8.2f + (activeGhosts.Count - 1) * 0.97f, 4.52f, 1)
+			new Vector3(-8.2f, 4.52f, 1)
 		);
-	} 
+
+		return currentScore >= maxScore;
+	}
+
+	// public void consolidate
+
+
+	public void ResetScore()
+	{
+		currentScore = 0;
+
+		foreach (GameObject ghost in activeGhosts)
+			returnGhost(ghost, false);
+	}
 }
