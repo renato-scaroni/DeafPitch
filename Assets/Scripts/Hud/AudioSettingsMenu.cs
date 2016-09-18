@@ -15,8 +15,8 @@ public class AudioSettingsMenu : MonoBehaviour {
 	public Sprite recording;
 	public Sprite tryAgain;
 
-	public float failed1 = 0;
-	public float failed2 = 0;
+	private float failed1 = 0;
+	private float failed2 = 0;
 
 
 	public bool DEBUG;

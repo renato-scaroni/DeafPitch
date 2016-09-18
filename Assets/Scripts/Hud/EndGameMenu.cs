@@ -9,6 +9,12 @@ public class EndGameMenu : MonoBehaviour {
 	public GameObject inGameMenu;
 	public GameObject titleMenu;
 
+	public SpriteRenderer starWin;
+	public SpriteRenderer starLose;
+
+	public Sprite[] starSprites;
+
+
 	// Use this for initialization
 	void Start () {
 		
@@ -19,14 +25,18 @@ public class EndGameMenu : MonoBehaviour {
 	
 	}
 
-	public void ShowMenu (int score, bool won)
+	public void ShowMenu (int tier, bool won)
 	{
 		inGameMenu.SetActive(false);
 
-		if (won)
+		if (won) {
 			winMenu.SetActive(true);
-		else
+			starWin.sprite = starSprites[tier];
+		}
+		else {
 			loseMenu.SetActive(true);
+			starLose.sprite = starSprites[tier];
+		}
 	}
 
 	public void RetryGame ()
