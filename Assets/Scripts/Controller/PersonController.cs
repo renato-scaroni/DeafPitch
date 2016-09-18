@@ -1,11 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PersonController : MonoBehaviour 
+public abstract class PersonController : MonoBehaviour 
 {
 	public float speed = .03f;
 	public Behaviour animationController;
-	
+	public GameObject swimAnim;
+	public GameObject deathAnim; 
+
+	public abstract void SetDeathAnimation ();
+	public abstract void SetSwimAnimation ();
+
 	// Update is called once per frame
 	void Update () 
 	{
