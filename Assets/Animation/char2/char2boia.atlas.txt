@@ -1,0 +1,48 @@
+
+char2boia.png
+size: 1024,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+char20000
+  rotate: false
+  xy: 2, 233
+  size: 263, 229
+  orig: 263, 229
+  offset: 0, 0
+  index: -1
+char20001
+  rotate: false
+  xy: 2, 2
+  size: 263, 229
+  orig: 263, 229
+  offset: 0, 0
+  index: -1
+char20002
+  rotate: false
+  xy: 267, 233
+  size: 263, 229
+  orig: 263, 229
+  offset: 0, 0
+  index: -1
+char20003
+  rotate: false
+  xy: 267, 2
+  size: 263, 229
+  orig: 263, 229
+  offset: 0, 0
+  index: -1
+char20004
+  rotate: false
+  xy: 532, 233
+  size: 263, 229
+  orig: 263, 229
+  offset: 0, 0
+  index: -1
+char20005
+  rotate: false
+  xy: 532, 2
+  size: 263, 229
+  orig: 263, 229
+  offset: 0, 0
+  index: -1

@@ -1,18 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour 
 {
 	public GameObject player; 
 	public Camera mainCamera;
-	public GameObject person;
 	public ScoreManager scoreManager;
+	public GameObject[] personPrefabs;
+	public float normalProbability;
 
-	private PlayerController playerController;
-	private GameObject personInstance;
+	public PlayerController playerController
+	{
+		get;
+		private set;
+	}
+	
+	private GameObject[] personInstances;
 	private Vector3 defaultPosition;
 	private float screenWidth;
+	private int personTypeCount;
+	private int currentPersonType;
 
 	static public GameManager instance
 	{
@@ -22,16 +31,22 @@ public class GameManager : MonoBehaviour
 
 	public void CreateNewPerson(Vector3 position)
 	{
-		if(personInstance == null)
+		float uniform = Random.Range(0f,1f);
+
+		currentPersonType = uniform > normalProbability ? 1 : 0;
+
+		print ("CreateNewPerson personType " + currentPersonType);
+
+		if(personInstances[currentPersonType] == null)
 		{
-			personInstance = Instantiate(person) as GameObject;
+			personInstances[currentPersonType] = Instantiate(personPrefabs[currentPersonType]) as GameObject;
 		}
 		else
 		{
-			personInstance.SetActive(true);
+			personInstances[currentPersonType].SetActive(true);
 		}
 
-		personInstance.transform.position = position;
+		personInstances[currentPersonType].transform.position = position;
 	}
 
 
@@ -51,17 +66,18 @@ public class GameManager : MonoBehaviour
 		screenWidth = mainCamera.orthographicSize * aspectRatio;
 		
 		defaultPosition = new Vector3(screenWidth*3/4, 0, 0);
-		CreateNewPerson(defaultPosition);
 		playerController = player.GetComponent<PlayerController>();
+		personInstances = new GameObject[personPrefabs.Length];
+		CreateNewPerson(defaultPosition);
 		PlayerController.OnAtePerson += () =>
 		{
-			personInstance.SetActive(false);
+			personInstances[currentPersonType].SetActive(false);
 			scoreManager.addScore(personInstance);
 			StartCoroutine(CreateNewPersonDelayed(1));
 		};
+		personTypeCount = personPrefabs.Length;
 	}
 	
-	// Update is called once per frame
 	void Update () 
 	{
 	
