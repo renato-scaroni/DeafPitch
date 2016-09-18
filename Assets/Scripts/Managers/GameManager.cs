@@ -109,6 +109,8 @@ public class GameManager : MonoBehaviour
 			bloodAnimation.GetComponent<Animator>().SetTrigger("Reset");
 			bloodAnimation.SetActive(true);
 			StartCoroutine(WaitAndDeActivate(.25f));
+
+			getCurrentPerson().GetComponent<AudioSource>().Play();
 		};
 	}
 	
