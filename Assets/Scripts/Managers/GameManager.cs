@@ -21,7 +21,6 @@ public class GameManager : MonoBehaviour
 	private GameObject[] personInstances;
 	private Vector3 defaultPosition;
 	private float screenWidth;
-	private int personTypeCount;
 	private int currentPersonType;
 
 	static public GameManager instance
@@ -35,8 +34,6 @@ public class GameManager : MonoBehaviour
 		float uniform = Random.Range(0f,1f);
 
 		currentPersonType = uniform > normalProbability ? 1 : 0;
-
-		print ("CreateNewPerson personType " + currentPersonType);
 
 		if(personInstances[currentPersonType] == null)
 		{
@@ -63,9 +60,10 @@ public class GameManager : MonoBehaviour
 	{
 		yield return new WaitForSeconds(time);
 		personInstances[currentPersonType].SetActive(false);
+		scoreManager.addScore(personInstances[currentPersonType]);
 		bloodAnimation.transform.position = player.transform.position + -Vector3.up * 1.7f + Vector3.right * 2f;
 	}
-// bloodAnimation.SetActive(false);
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -84,7 +82,6 @@ public class GameManager : MonoBehaviour
 			StartCoroutine(WaitAndDeActivate(.25f));
 			StartCoroutine(CreateNewPersonDelayed(1));
 		};
-		personTypeCount = personPrefabs.Length;
 	}
 	
 	void Update () 
