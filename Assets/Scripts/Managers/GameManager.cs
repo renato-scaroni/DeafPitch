@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
 	{
 		yield return new WaitForSeconds(time);
 		Vector3 position = defaultPosition;
-		position.x += mainCamera.transform.position.x + playerController.GetCurrentSpeed();
+		position.x += mainCamera.transform.position.x + playerController.currentSpeed;
 		CreateNewPerson(position);
 	}
 

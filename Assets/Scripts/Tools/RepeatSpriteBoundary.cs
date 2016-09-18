@@ -9,7 +9,7 @@
  // @NOTE Vertical only, you can easily expand this to horizontal with a little tweaking
  public class RepeatSpriteBoundary : MonoBehaviour {
 	 public Sprite spriteImg;
-	 public CameraController camera;
+	 public CameraController mainCamera;
 
 	 private int lastChildIndex;
 	 private int ntiles;
@@ -17,7 +17,7 @@
 	 private float moveInterval;
 	 private SpriteRenderer childSprite;
 	 private float childSpriteSizeX;
-	 private float childSpriteSizeY;
+	//  private float childSpriteSizeY;
 	 public Transform[] children;
 
      void Awake () {
@@ -47,10 +47,10 @@
              child.transform.position = targetposition + (new Vector3(spriteSize.x, 0, 0) * i);
 			 children[i] = child.transform;
          }
-		 print(ntiles);
+		 
 		 lastChildIndex = ntiles - 1;
 	 	 childSpriteSizeX = childSprite.bounds.size.x;
-	 	 childSpriteSizeY = childSprite.bounds.size.y;
+	 	//  childSpriteSizeY = childSprite.bounds.size.y;
 
          // Set the parent last on the prefab to prevent transform displacement
          childPrefab.transform.parent = transform;
@@ -62,7 +62,6 @@
 	 void MoveTiles()
 	 {
 		 int nextIndex = (lastChildIndex + 1)%ntiles;
-		 print(nextIndex + " " + lastChildIndex);
 		 children[nextIndex].position = children[lastChildIndex].position + Vector3.right * childSpriteSizeX;
 		 lastChildIndex = nextIndex;
 	 }
@@ -70,10 +69,9 @@
 	float timeCount = 0;
 	 void Update()
 	 {
-		 moveInterval = childSpriteSizeX/camera.currentSpeed;
+		 moveInterval = childSpriteSizeX/mainCamera.currentSpeed;
 		 timeCount += 1;
-		//  print(childSpriteSizeX);
-		//  print(moveInterval + " " + timeCount);
+		 
 		 if(timeCount > moveInterval)
 		 {
 			MoveTiles();
