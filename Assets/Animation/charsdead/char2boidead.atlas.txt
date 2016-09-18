@@ -1,0 +1,41 @@
+
+char2boidead.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+char20004
+  rotate: false
+  xy: 307, 301
+  size: 263, 229
+  orig: 263, 229
+  offset: 0, 0
+  index: -1
+dead2_1
+  rotate: false
+  xy: 2, 532
+  size: 303, 263
+  orig: 303, 263
+  offset: 0, 0
+  index: -1
+dead2_2
+  rotate: false
+  xy: 2, 267
+  size: 303, 263
+  orig: 303, 263
+  offset: 0, 0
+  index: -1
+dead2_3
+  rotate: false
+  xy: 307, 532
+  size: 303, 263
+  orig: 303, 263
+  offset: 0, 0
+  index: -1
+dead2_4
+  rotate: false
+  xy: 2, 2
+  size: 303, 263
+  orig: 303, 263
+  offset: 0, 0
+  index: -1

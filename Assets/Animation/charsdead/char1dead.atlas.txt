@@ -1,0 +1,48 @@
+
+char1dead.png
+size: 1024,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+char1_1
+  rotate: false
+  xy: 2, 12
+  size: 346, 219
+  orig: 346, 219
+  offset: 0, 0
+  index: -1
+char1_2
+  rotate: false
+  xy: 612, 277
+  size: 346, 219
+  orig: 346, 219
+  offset: 0, 0
+  index: -1
+char1_3
+  rotate: false
+  xy: 615, 56
+  size: 346, 219
+  orig: 346, 219
+  offset: 0, 0
+  index: -1
+char20004
+  rotate: false
+  xy: 350, 2
+  size: 263, 229
+  orig: 263, 229
+  offset: 0, 0
+  index: -1
+dead2_1
+  rotate: false
+  xy: 2, 233
+  size: 303, 263
+  orig: 303, 263
+  offset: 0, 0
+  index: -1
+dead2_4
+  rotate: false
+  xy: 307, 233
+  size: 303, 263
+  orig: 303, 263
+  offset: 0, 0
+  index: -1
