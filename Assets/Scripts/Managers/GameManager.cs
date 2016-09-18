@@ -98,12 +98,14 @@ public class GameManager : MonoBehaviour
 	public void PauseGame ()
 	{
 		player.GetComponent<PlayerController>().PausePlayer();
-		mainCamera.GetComponent<CameraController>().enabled = false;
+		mainCamera.GetComponent<CameraController>().PauseCamera();
+		personInstances[currentPersonType].GetComponent<PersonController>().PausePerson();
 	}
 
 	public void ResumeGame ()
 	{
 		player.GetComponent<PlayerController>().ResumePlayer();
-		mainCamera.GetComponent<CameraController>().enabled = true;
+		mainCamera.GetComponent<CameraController>().ResumeCamera();
+		personInstances[currentPersonType].GetComponent<PersonController>().ResumePerson();
 	}
 }
