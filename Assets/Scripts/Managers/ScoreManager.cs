@@ -81,11 +81,11 @@ public class ScoreManager : MonoBehaviour
 	{
 		float lifePercent = (float)(currentScore) / (float)(maxScore);
 
-		if(life > 1f/4f * (float)(maxScore))
+		if(lifePercent > 1f/4f * (float)(maxScore))
 			return 1;
-		if(life > 2f/4f * (float)(maxScore))
+		if(lifePercent > 2f/4f * (float)(maxScore))
 			return 2;
-		if(life > 3f/4f * (float)(maxScore))
+		if(lifePercent > 3f/4f * (float)(maxScore))
 			return 3;
 
 		return 0;
