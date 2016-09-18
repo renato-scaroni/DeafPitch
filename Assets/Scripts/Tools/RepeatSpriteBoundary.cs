@@ -37,7 +37,7 @@
 
          // Loop through and spit out repeated tiles
          GameObject child;
-		 ntiles = (int)Mathf.Ceil(sprite.bounds.size.x/childSprite.bounds.size.x) + 1;
+		 ntiles = (int)Mathf.Ceil(sprite.bounds.size.x/childSprite.bounds.size.x) + 2;
 		 children = new Transform[ntiles];
 		 children[0] = childPrefab.transform; 
 		//  (int)Mathf.Round(sprite.bounds.size.y)

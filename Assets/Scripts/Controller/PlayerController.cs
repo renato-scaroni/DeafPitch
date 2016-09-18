@@ -48,10 +48,12 @@ public class PlayerController : MonoBehaviour
 	public float maxAnimationScale = 3;
 	public float minAnimationScale = 1;
 
-
 	// Person Interactions
 	public delegate void AtePersonHandler();
 	public static event AtePersonHandler OnAtePerson;
+
+	enum PlayerState {bite, swimming};
+	private PlayerState currentState;
 
 
 
@@ -140,6 +142,8 @@ public class PlayerController : MonoBehaviour
 			if(OnAtePerson != null)
 			{
 				OnAtePerson();
+				currentState = PlayerState.bite;
+				spineAnimationState.SetAnimation(0, attackAnimation, false);
 			}
 		}
     }
@@ -153,7 +157,18 @@ public class PlayerController : MonoBehaviour
 	public void ResumePlayer ()
 	{
 		enabled = true;
-		skeletonAnimation.enabled = true;
+		spineAnimationState.SetAnimation(0, swimAnimation, true);
+		skeleton = skeletonAnimation.skeleton;
+		currentState = PlayerState.swimming;
+	}
+
+	void AnimationComplete(Spine.AnimationState state, int trackIndex, int loopCount)
+	{
+		if(currentState == PlayerState.bite)
+		{
+			spineAnimationState.SetAnimation(0, swimAnimation, true);
+			currentState = PlayerState.swimming;	
+		}
 	}
 
 	void Start () 
@@ -162,6 +177,9 @@ public class PlayerController : MonoBehaviour
 		spineAnimationState = skeletonAnimation.state;
 		spineAnimationState.SetAnimation(0, swimAnimation, true);
 		// skeleton = skeletonAnimation.skeleton;
+
+		currentState = PlayerState.swimming;
+		spineAnimationState.Complete += AnimationComplete;
 	}
 
 	// Update is called once per frame
@@ -183,7 +201,8 @@ public class PlayerController : MonoBehaviour
 		if (currentThreshold < newSpeed - currentSpeed)
 			print("ALERT!!!!");
 
-		setAnimationTimeScale(currentSpeed);
+		if(currentState == PlayerState.swimming)
+			setAnimationTimeScale(currentSpeed);
 
 		Vector3 position = transform.position;
 		Vector3 targetPosition = position;
