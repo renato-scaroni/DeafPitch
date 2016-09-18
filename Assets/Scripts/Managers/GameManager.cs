@@ -32,8 +32,6 @@ public class GameManager : MonoBehaviour
 
 	public bool isPaused = false;
 
-
-
 	GameObject getCurrentPerson ()
 	{
 		return currentPersonType == -1 ? null : personInstances[currentPersonType];
@@ -54,7 +52,7 @@ public class GameManager : MonoBehaviour
 			getCurrentPerson().SetActive(true);
 		}
 
-
+		personInstances[currentPersonType].GetComponent<PersonController>().SetSwimAnimation();
 		getCurrentPerson().transform.position = position;
 
 		if (!isPaused)
@@ -68,7 +66,7 @@ public class GameManager : MonoBehaviour
 	{
 		yield return new WaitForSeconds(time);
 		Vector3 position = defaultPosition;
-		position.x += mainCamera.transform.position.x + playerController.currentSpeed;
+		position.x += mainCamera.transform.position.x - 2;// playerController.currentSpeed*3;
 		CreateNewPerson(position);
 	}
 
@@ -77,7 +75,7 @@ public class GameManager : MonoBehaviour
 		yield return new WaitForSeconds(time);
 		GameObject currentPerson = getCurrentPerson();
 
-		currentPerson.SetActive(false);
+		currentPerson.GetComponent<PersonController>().SetDeathAnimation();
 		bombManager.spawnBomb(currentPerson.transform.position.y);
 
 		if (scoreManager.addScore(currentPerson))
@@ -92,7 +90,7 @@ public class GameManager : MonoBehaviour
 	}
 
 	// Use this for initialization
-	void Start () 
+	void Start ()
 	{
 		instance = this;
 		float aspectRatio = (float)(Screen.width) / (float)(Screen.height);
