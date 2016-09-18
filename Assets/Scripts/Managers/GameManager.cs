@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
 	public GameObject player; 
 	public Camera mainCamera;
+	public ScoreManager scoreManager;
 	public GameObject[] personPrefabs;
 	public float normalProbability;
 	public GameObject bloodAnimation;
@@ -71,7 +72,7 @@ public class GameManager : MonoBehaviour
 		instance = this;
 		float aspectRatio = (float)(Screen.width) / (float)(Screen.height);
 		screenWidth = mainCamera.orthographicSize * aspectRatio;
-		print("[GameManager] " + screenWidth);
+		
 		defaultPosition = new Vector3(screenWidth*3/4, 0, 0);
 		playerController = player.GetComponent<PlayerController>();
 		personInstances = new GameObject[personPrefabs.Length];

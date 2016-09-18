@@ -165,8 +165,12 @@ public class PlayerController : MonoBehaviour
 	public void ResumePlayer ()
 	{
 		enabled = true;
-		spineAnimationState.SetAnimation(0, swimAnimation, true);
-		currentState = PlayerState.swimming;
+
+		spineAnimationState.SetAnimation(
+			0,
+			currentState == PlayerState.swimming ? swimAnimation : attackAnimation,
+			true
+		);
 	}
 
 	void AnimationComplete(Spine.AnimationState state, int trackIndex, int loopCount)
