@@ -11,6 +11,9 @@ public class ScoreManager : MonoBehaviour
 	public GameObject ghostPrefab;
 	public Camera mainCamera;
 	public Image ghostBarFill;
+	public Image [] stars;
+	public Sprite starEpmpty;
+	public Sprite starFull;
 
 	public int currentScore;
 	public int maxScore = 12; // Should be multiple of 3 
@@ -75,18 +78,27 @@ public class ScoreManager : MonoBehaviour
 	public void UpdateGhostBar()
 	{
 		ghostBarFill.fillAmount = (float)(currentScore) / (float)(maxScore);
+		int tier = GetTier();
+		int i = 1;
+		while (i <= tier)
+		{
+			print(i);
+			stars[i-1].sprite = starFull;
+			i++;
+		}
+		while (i<3)
+		{
+			print(i);
+			stars[i-1].sprite = starEpmpty;
+			i++;
+		}
 	}
 
 	public int GetTier()
 	{
 		float lifePercent = (float)(currentScore) / (float)(maxScore);
 
-		if(lifePercent > 1f/4f * (float)(maxScore))
-			return 1;
-		if(lifePercent > 2f/4f * (float)(maxScore))
-			return 2;
-		if(lifePercent > 3f/4f * (float)(maxScore))
-			return 3;
+
 
 		return 0;
 	} 

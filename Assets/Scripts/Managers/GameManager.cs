@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
 	private int currentPersonType = -1;
 
 	private bool isPaused = false;
-	private bool shouldReset = true;
+	private bool shouldReset = false;
 
 
 	GameObject getCurrentPerson ()
@@ -113,7 +113,7 @@ public class GameManager : MonoBehaviour
 			getCurrentPerson().GetComponent<AudioSource>().Play();
 		};
 
-		PauseGame();
+		// PauseGame();
 	}
 	
 	void Update () 
