@@ -6,7 +6,7 @@ public class EndGameMenu : MonoBehaviour {
 	
 	public GameObject winMenu;
 	public GameObject loseMenu;
-	public Button pauseButton;
+	public GameObject inGameMenu;
 
 	// Use this for initialization
 	void Start () {
@@ -20,7 +20,7 @@ public class EndGameMenu : MonoBehaviour {
 
 	public void ShowMenu (int score, bool won)
 	{
-		pauseButton.gameObject.SetActive(false);
+		inGameMenu.SetActive(false);
 
 		if (won)
 			winMenu.SetActive(true);
@@ -32,7 +32,7 @@ public class EndGameMenu : MonoBehaviour {
 	{
 		winMenu.SetActive(false);
 		loseMenu.SetActive(false);
-		pauseButton.gameObject.SetActive(true);
+		inGameMenu.SetActive(true);
 		
 		GameManager.instance.ResetGame();
 	}
@@ -41,7 +41,7 @@ public class EndGameMenu : MonoBehaviour {
 	{
 		winMenu.SetActive(false);
 		loseMenu.SetActive(false);
-		pauseButton.gameObject.SetActive(true);
+		inGameMenu.SetActive(true);
 
 		GameManager.instance.ResetGame();
 	}
