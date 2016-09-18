@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
 	public float minHeight = -4.5f; 
 	public float maxHeight = 0;
 	public float maxInputDiff = 1f;
+	public float inputDiffMultiplier = 0.5f;
 	public bool alertState = false;
 	public float alertStateTime;
 
@@ -134,7 +135,7 @@ public class PlayerController : MonoBehaviour
 				
 		}
         
-		float targetSpeedFactor = maxInputDiff - Mathf.Abs(lastMoveInput1 - lastMoveInput2);
+		float targetSpeedFactor = maxInputDiff - Mathf.Abs(lastMoveInput1 - lastMoveInput2) * inputDiffMultiplier;
 		targetSpeedFactor = targetSpeedFactor < 0 ? 0 : targetSpeedFactor;
 		if(input)
 		{
@@ -266,7 +267,7 @@ public class PlayerController : MonoBehaviour
 		Vector3 targetPosition = position;
 		targetPosition.x = targetPosition.x + currentSpeed;
 
-		float targetY = currentSpeedDelta * (maxHeight - minHeight)/(maxSpeed-minSpeed) + minHeight;
+		float targetY = currentSpeedPercentage * (maxHeight - minHeight) + minHeight;
 		targetPosition.y = Mathf.Lerp(position.y, targetY, Time.deltaTime);
 
 		transform.position = targetPosition;
