@@ -102,8 +102,6 @@ public class GameManager : MonoBehaviour
 		playerController = player.GetComponent<PlayerController>();
 		personInstances = new GameObject[personPrefabs.Length];
 
-		StartCoroutine(CreateNewPersonDelayed(2));
-
 		PlayerController.OnAtePerson += () =>
 		{
 			bloodAnimation.GetComponent<Animator>().SetTrigger("Reset");
@@ -112,7 +110,7 @@ public class GameManager : MonoBehaviour
 
 			GameObject currentPerson = getCurrentPerson();
 			if (currentPerson == null) return;
-			
+
 			currentPerson.GetComponent<AudioSource>().Play();
 		};
 
