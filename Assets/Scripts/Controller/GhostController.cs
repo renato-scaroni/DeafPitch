@@ -40,7 +40,11 @@ public class GhostController : MonoBehaviour {
 			1
 		);
 		
-		if (completion > 1) enabled = false;
+		if (completion > 1)
+		{
+			gameObject.SetActive(false);
+			GameManager.instance.scoreManager.UpdateGhostBar();
+		} 
 	}
 
 	public void startAnimation (Vector3 start, Vector3 target)
