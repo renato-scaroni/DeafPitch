@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 	public GameObject player; 
 	public Camera mainCamera;
 	public GameObject person;
+	public ScoreManager scoreManager;
 
 	private PlayerController playerController;
 	private GameObject personInstance;
@@ -48,13 +49,14 @@ public class GameManager : MonoBehaviour
 		instance = this;
 		float aspectRatio = (float)(Screen.width) / (float)(Screen.height);
 		screenWidth = mainCamera.orthographicSize * aspectRatio;
-		print("[GameManager] " + screenWidth);
+		
 		defaultPosition = new Vector3(screenWidth*3/4, 0, 0);
 		CreateNewPerson(defaultPosition);
 		playerController = player.GetComponent<PlayerController>();
 		PlayerController.OnAtePerson += () =>
 		{
 			personInstance.SetActive(false);
+			scoreManager.addScore(personInstance);
 			StartCoroutine(CreateNewPersonDelayed(1));
 		};
 	}
